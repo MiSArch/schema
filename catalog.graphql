@@ -36,6 +36,7 @@ interface CategoryCharacteristic implements Node {
   category: Category!
   "The description of the CategoryCharacteristic."
   description: String!
+  "The ID of the node."
   id: ID!
   "The name of the CategoryCharacteristic."
   name: String!
@@ -49,6 +50,7 @@ interface CategoryCharacteristicValue {
 
 "An object with an ID."
 interface Node {
+  "The ID of the node."
   id: ID!
 }
 
@@ -56,8 +58,11 @@ interface Node {
 type CategoricalCategoryCharacteristic implements CategoryCharacteristic & Node {
   "The Category this item belongs to."
   category: Category!
+  "The description of the CategoryCharacteristic."
   description: String!
+  "The ID of the node."
   id: ID!
+  "The name of the CategoryCharacteristic."
   name: String!
 }
 
@@ -82,6 +87,7 @@ type Category implements Node {
   ): CategoryCharacteristicConnection!
   "The description of the category."
   description: String!
+  "The ID of the node."
   id: ID!
   "The name of the category."
   name: String!
@@ -163,8 +169,11 @@ type Mutation {
 type NumericalCategoryCharacteristic implements CategoryCharacteristic & Node {
   "The Category this item belongs to."
   category: Category!
+  "The description of the CategoryCharacteristic."
   description: String!
+  "The ID of the node."
   id: ID!
+  "The name of the CategoryCharacteristic."
   name: String!
   "The unit of the NumericalCategoryCharacteristic."
   unit: String!
@@ -191,6 +200,7 @@ type Product implements Node {
   ): CategoryConnection!
   "The default variant of the product."
   defaultVariant: ProductVariant!
+  "The ID of the node."
   id: ID!
   "An internal name to identify the Product, not visible to customers."
   internalName: String!
@@ -221,6 +231,7 @@ type ProductConnection {
 type ProductVariant implements Node {
   "The current version of the ProductVariant."
   currentVersion: ProductVariantVersion!
+  "The ID of the node."
   id: ID!
   "If true, the ProductVariant is visible to customers."
   isPubliclyVisible: Boolean!
@@ -264,6 +275,7 @@ type ProductVariantVersion implements Node {
   createdAt: DateTime!
   "The description of the ProductVariantVersion."
   description: String!
+  "The ID of the node."
   id: ID!
   "The name of the ProductVariantVersion."
   name: String!
@@ -381,19 +393,25 @@ input CategoricalCategoryCharacteristicValueInput {
 
 "CategoryCharacteristic order"
 input CategoryCharacteristicOrderInput {
+  "The direction to order by"
   direction: OrderDirection!
+  "The field to order by"
   field: CategoryCharacteristicOrderField!
 }
 
 "CategoryCharacteristicValue order"
 input CategoryCharacteristicValueOrderInput {
+  "The direction to order by"
   direction: OrderDirection!
+  "The field to order by"
   field: CategoryCharacteristicValueOrderField!
 }
 
 "Category order"
 input CategoryOrderInput {
+  "The direction to order by"
   direction: OrderDirection!
+  "The field to order by"
   field: CategoryOrderField!
 }
 
@@ -401,7 +419,9 @@ input CategoryOrderInput {
 input CreateCategoricalCategoryCharacteristicInput {
   "The Category that the CategoricalCategoryCharacteristicI belongs to"
   categoryId: ID!
+  "The description of the CategoricalCategoryCharacteristic"
   description: String!
+  "The name of the CategoricalCategoryCharacteristic"
   name: String!
 }
 
@@ -421,8 +441,11 @@ input CreateCategoryInput {
 input CreateNumericalCategoryCharacteristicInput {
   "The Category that the NumericalCategoryCharacteristic belongs to"
   categoryId: ID!
+  "The description of the NumericalCategoryCharacteristic"
   description: String!
+  "The name of the NumericalCategoryCharacteristic"
   name: String!
+  "The unit of the NumericalCategoryCharacteristic"
   unit: String!
 }
 
@@ -440,7 +463,9 @@ input CreateProductInput {
 
 "Input for the createProductVariant mutation"
 input CreateProductVariantInput {
+  "The initial ProductVariantVersion of the ProductVariant."
   initialVersion: ProductVariantVersionInput!
+  "If true, the ProductVariant is visible to customers."
   isPubliclyVisible: Boolean!
   "The id of the Product this ProductVariant belongs to."
   productId: ID!
@@ -448,12 +473,19 @@ input CreateProductVariantInput {
 
 "Input for the createProductVariantVersion mutation"
 input CreateProductVariantVersionInput {
+  "The amount of days for which an instance of the ProductVariant can be returned after purchase"
   canBeReturnedForDays: Float
+  "The CategoricalCategoryCharacteristicValues of the ProductVariant, must be compatible with the Categories of the associated Product."
   categoricalCharacteristicValues: [CategoricalCategoryCharacteristicValueInput!]!
+  "The description of the ProductVariant."
   description: String!
+  "The name of the ProductVariant."
   name: String!
+  "The NumericalCategoryCharacteristicValues of the ProductVariant, must be compatible with the Categories of the associated Product."
   numericalCharacteristicValues: [NumericalCategoryCharacteristicValueInput!]!
+  "The id of the ProductVariant this ProductVariantVersion belongs to."
   productVariantId: ID!
+  "The retail price of the ProductVariant."
   retailPrice: Int!
 }
 
@@ -477,7 +509,9 @@ input NumericalCategoryCharacteristicValueInput {
 
 "Product order"
 input ProductOrderInput {
+  "The direction to order by"
   direction: OrderDirection!
+  "The field to order by"
   field: ProductOrderField!
 }
 
@@ -491,7 +525,9 @@ input ProductVariantInput {
 
 "ProductVariant order"
 input ProductVariantOrderInput {
+  "The direction to order by"
   direction: OrderDirection!
+  "The field to order by"
   field: ProductVariantOrderField!
 }
 
@@ -513,6 +549,8 @@ input ProductVariantVersionInput {
 
 "ProductVariantVersion order"
 input ProductVariantVersionOrderInput {
+  "The direction to order by"
   direction: OrderDirection!
+  "The field to order by"
   field: ProductVariantVersionOrderField!
 }
