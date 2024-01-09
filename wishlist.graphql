@@ -1,0 +1,218 @@
+input AddWishlistInput {
+	"""
+	UUID of user owning the wishlist.
+	"""
+	userId: UUID!
+	"""
+	UUIDs of product variants in wishlist.
+	"""
+	productVariantIds: [UUID!]!
+	"""
+	Wishlist name.
+	"""
+	name: String!
+}
+
+
+scalar DateTime
+
+
+
+
+type Mutation {
+	"""
+	Adds a wishlist with a user_id, a list of product_variant_ids and a name.
+	
+	Formats UUIDs as hyphenated lowercase Strings.
+	"""
+	addWishlist(
+		"""
+		AddWishlistInput
+		"""
+		input: AddWishlistInput!
+	): Wishlist!
+	"""
+	Updates name and/or product_variant_ids of a specific wishlist referenced with an id.
+	
+	Formats UUIDs as hyphenated lowercase Strings.
+	"""
+	updateWishlist(
+		"""
+		UpdateWishlistInput
+		"""
+		input: UpdateWishlistInput!
+	): Wishlist!
+	"""
+	Deletes wishlist of id.
+	"""
+	deleteWishlist(
+		"""
+		UUID of wishlist to delete.
+		"""
+		id: UUID!
+	): Boolean!
+}
+
+"""
+GraphQL order direction.
+"""
+enum OrderDirection {
+	"""
+	Ascending order direction.
+	"""
+	ASC
+	"""
+	Descending order direction.
+	"""
+	DESC
+}
+
+type Query {
+	"""
+	Retrieves all wishlists.
+	"""
+	wishlists(
+		"""
+		Describes that the `first` N wishlists should be retrieved.
+		"""
+		first: Int,
+		"""
+		Describes how many wishlists should be skipped at the beginning.
+		"""
+		skip: Int,
+		"""
+		Specifies the order in which wishlists are retrieved.
+		"""
+		orderBy: WishlistOrder
+	): WishlistConnection!
+	"""
+	Retrieves wishlist of specific id.
+	"""
+	wishlist(
+		"""
+		UUID of wishlist to retrieve.
+		"""
+		id: UUID!
+	): Wishlist!
+}
+
+
+"""
+A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
+Strings within GraphQL. UUIDs are used to assign unique identifiers to
+entities without requiring a central allocating authority.
+
+# References
+
+* [Wikipedia: Universally Unique Identifier](http://en.wikipedia.org/wiki/Universally_unique_identifier)
+* [RFC4122: A Universally Unique IDentifier (UUID) URN Namespace](http://tools.ietf.org/html/rfc4122)
+"""
+scalar UUID
+
+input UpdateWishlistInput {
+	"""
+	UUID of wishlist to update.
+	"""
+	id: UUID!
+	"""
+	product variant UUIDs of wishlist to update
+	"""
+	productVariantIds: [UUID!]
+	"""
+	Wishlist name to update
+	"""
+	name: String
+}
+
+"""
+The Wishlist of a user.
+"""
+type Wishlist {
+	"""
+	Wishlist UUID.
+	"""
+	id: String!
+	"""
+	UUID of user.
+	"""
+	userId: String!
+	"""
+	UUIDs product variants in Wishlist.
+	"""
+	productVariantIds: [String!]!
+	"""
+	Name of Wishlist.
+	"""
+	name: String!
+	"""
+	Timestamp when Wishlist was created.
+	"""
+	createdAt: DateTime!
+	"""
+	Timestamp when Wishlist was last updated.
+	"""
+	lastUpdatedAt: DateTime!
+}
+
+"""
+A connection of Wishlists.
+"""
+type WishlistConnection {
+	"""
+	The resulting entities.
+	"""
+	nodes: [Wishlist!]!
+	"""
+	Whether this connection has a next page.
+	"""
+	hasNextPage: Boolean!
+	"""
+	The total amount of items in this connection.
+	"""
+	totalCount: Int!
+}
+
+"""
+Specifies the order of wishlists.
+"""
+input WishlistOrder {
+	"""
+	Order direction of wishlists.
+	"""
+	direction: OrderDirection
+	"""
+	Field that wishlists should be ordered by.
+	"""
+	field: WishlistOrderField
+}
+
+"""
+Describes the fields that a wishlist can be ordered by.
+"""
+enum WishlistOrderField {
+	"""
+	Orders by "id".
+	"""
+	ID
+	"""
+	Orders by "user_id".
+	"""
+	USER_ID
+	"""
+	Orders by "name".
+	"""
+	NAME
+	"""
+	Orders by "created_at".
+	"""
+	CREATED_AT
+	"""
+	Orders by "last_updated_at".
+	"""
+	LAST_UPDATED_AT
+}
+
+schema {
+	query: Query
+	mutation: Mutation
+}
