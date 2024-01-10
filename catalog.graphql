@@ -1,4 +1,4 @@
-schema {
+schema @link(import : ["@key", "@shareable", "FieldSet"], url : "https://specs.apollo.dev/federation/v2.5"){
   query: Query
   mutation: Mutation
 }
@@ -15,8 +15,17 @@ directive @include(
     if: Boolean!
   ) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 
+"Space separated list of primary keys needed to access federated object"
+directive @key(fields: FieldSet!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
+
+"Links definitions within the document to external schemas."
+directive @link(as: String, import: [link__Import], url: String!) repeatable on SCHEMA
+
 "Indicates an Input Object is a OneOf Input Object."
 directive @oneOf on INPUT_OBJECT
+
+"Indicates that given object and/or field can be resolved by multiple subgraphs"
+directive @shareable repeatable on OBJECT | FIELD_DEFINITION
 
 "Directs the executor to skip this field or fragment when the `if` argument is true."
 directive @skip(
@@ -37,7 +46,7 @@ interface CategoryCharacteristic implements Node {
   "The description of the CategoryCharacteristic."
   description: String!
   "The ID of the node."
-  id: ID!
+  id: UUID!
   "The name of the CategoryCharacteristic."
   name: String!
 }
@@ -51,23 +60,25 @@ interface CategoryCharacteristicValue {
 "An object with an ID."
 interface Node {
   "The ID of the node."
-  id: ID!
+  id: UUID!
 }
 
+union _Entity = CategoricalCategoryCharacteristic | Category | NumericalCategoryCharacteristic | Product | ProductVariant | ProductVariantVersion
+
 "A categorical characteristic of a category."
-type CategoricalCategoryCharacteristic implements CategoryCharacteristic & Node {
+type CategoricalCategoryCharacteristic implements CategoryCharacteristic & Node @key(fields : "id", resolvable : true) {
   "The Category this item belongs to."
   category: Category!
   "The description of the CategoryCharacteristic."
   description: String!
   "The ID of the node."
-  id: ID!
+  id: UUID!
   "The name of the CategoryCharacteristic."
   name: String!
 }
 
 "A possible value for a categorical characteristic."
-type CategoricalCategoryCharacteristicValue implements CategoryCharacteristicValue {
+type CategoricalCategoryCharacteristicValue implements CategoryCharacteristicValue @shareable {
   "The associated CategoryCharacteristic this is a value of."
   characteristic: CategoryCharacteristic!
   "The value of the characteristic."
@@ -75,7 +86,7 @@ type CategoricalCategoryCharacteristicValue implements CategoryCharacteristicVal
 }
 
 "A category"
-type Category implements Node {
+type Category implements Node @key(fields : "id", resolvable : true) {
   "Get characteristics for the category"
   characteristics(
     "Number of items to return"
@@ -88,7 +99,7 @@ type Category implements Node {
   "The description of the category."
   description: String!
   "The ID of the node."
-  id: ID!
+  id: UUID!
   "The name of the category."
   name: String!
   "Get all associated products"
@@ -103,7 +114,7 @@ type Category implements Node {
 }
 
 "A connection to a list of `CategoryCharacteristic` values."
-type CategoryCharacteristicConnection {
+type CategoryCharacteristicConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
   "The resulting ."
@@ -113,7 +124,7 @@ type CategoryCharacteristicConnection {
 }
 
 "A connection to a list of `CategoryCharacteristicValue` values."
-type CategoryCharacteristicValueConnection {
+type CategoryCharacteristicValueConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
   "The resulting ."
@@ -123,7 +134,7 @@ type CategoryCharacteristicValueConnection {
 }
 
 "A connection to a list of `Category` values."
-type CategoryConnection {
+type CategoryConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
   "The resulting ."
@@ -166,13 +177,13 @@ type Mutation {
 }
 
 "A numerical characteristic of a Category."
-type NumericalCategoryCharacteristic implements CategoryCharacteristic & Node {
+type NumericalCategoryCharacteristic implements CategoryCharacteristic & Node @key(fields : "id", resolvable : true) {
   "The Category this item belongs to."
   category: Category!
   "The description of the CategoryCharacteristic."
   description: String!
   "The ID of the node."
-  id: ID!
+  id: UUID!
   "The name of the CategoryCharacteristic."
   name: String!
   "The unit of the NumericalCategoryCharacteristic."
@@ -180,7 +191,7 @@ type NumericalCategoryCharacteristic implements CategoryCharacteristic & Node {
 }
 
 "A numerical value of a NumericalCategoryCharacteristic."
-type NumericalCategoryCharacteristicValue implements CategoryCharacteristicValue {
+type NumericalCategoryCharacteristicValue implements CategoryCharacteristicValue @shareable {
   "The associated CategoryCharacteristic this is a value of."
   characteristic: CategoryCharacteristic!
   "The value of the NumericalCategoryCharacteristic."
@@ -188,7 +199,7 @@ type NumericalCategoryCharacteristicValue implements CategoryCharacteristicValue
 }
 
 "A product."
-type Product implements Node {
+type Product implements Node @key(fields : "id", resolvable : true) {
   "Get all associated Categories"
   categories(
     "Number of items to return"
@@ -201,7 +212,7 @@ type Product implements Node {
   "The default variant of the product."
   defaultVariant: ProductVariant!
   "The ID of the node."
-  id: ID!
+  id: UUID!
   "An internal name to identify the Product, not visible to customers."
   internalName: String!
   "If true, the Product is visible to customers."
@@ -218,7 +229,7 @@ type Product implements Node {
 }
 
 "A connection to a list of `Product` values."
-type ProductConnection {
+type ProductConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
   "The resulting ."
@@ -228,11 +239,11 @@ type ProductConnection {
 }
 
 "A variant of a Product."
-type ProductVariant implements Node {
+type ProductVariant implements Node @key(fields : "id", resolvable : true) {
   "The current version of the ProductVariant."
   currentVersion: ProductVariantVersion!
   "The ID of the node."
-  id: ID!
+  id: UUID!
   "If true, the ProductVariant is visible to customers."
   isPubliclyVisible: Boolean!
   "The Product belonging to this variant."
@@ -249,7 +260,7 @@ type ProductVariant implements Node {
 }
 
 "A connection to a list of `ProductVariant` values."
-type ProductVariantConnection {
+type ProductVariantConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
   "The resulting ."
@@ -259,7 +270,7 @@ type ProductVariantConnection {
 }
 
 "A version of a ProductVariant."
-type ProductVariantVersion implements Node {
+type ProductVariantVersion implements Node @key(fields : "id", resolvable : true) {
   "The amount of days for which an instance of the ProductVariantVersion can be returned after purchase"
   canBeReturnedForDays: Float
   "Get all associated CategoryCharacteristicValues"
@@ -276,7 +287,7 @@ type ProductVariantVersion implements Node {
   "The description of the ProductVariantVersion."
   description: String!
   "The ID of the node."
-  id: ID!
+  id: UUID!
   "The name of the ProductVariantVersion."
   name: String!
   "The ProductVariant this is a version of."
@@ -288,7 +299,7 @@ type ProductVariantVersion implements Node {
 }
 
 "A connection to a list of `ProductVariantVersion` values."
-type ProductVariantVersionConnection {
+type ProductVariantVersionConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
   "The resulting ."
@@ -298,6 +309,9 @@ type ProductVariantVersionConnection {
 }
 
 type Query {
+  "Union of all types that use the @key directive, including both types native to the schema and extended types"
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
   "Get all categories"
   categories(
     "Number of items to return"
@@ -310,12 +324,12 @@ type Query {
   "Get a category by id"
   category(
     "The id of the category"
-    id: ID!
+    id: UUID!
   ): Category!
   "Get a product by id"
   product(
     "The id of the product"
-    id: ID!
+    id: UUID!
   ): Product!
   "Get all products"
   products(
@@ -326,6 +340,10 @@ type Query {
     "Number of items to skip"
     skip: Int
   ): ProductConnection!
+}
+
+type _Service {
+  sdl: String!
 }
 
 "CategoryCharacteristic order fields"
@@ -375,6 +393,17 @@ enum ProductVariantVersionOrderField {
 "A slightly refined version of RFC-3339 compliant DateTime Scalar"
 scalar DateTime
 
+"Federation type representing set of fields"
+scalar FieldSet
+
+"A universally unique identifier compliant UUID Scalar"
+scalar UUID
+
+"Federation scalar type used to represent any external entities passed to _entities query."
+scalar _Any
+
+scalar link__Import
+
 "Input to create a CategoricalCategoryCharacteristic for a Category"
 input CategoricalCategoryCharacteristicInput {
   "The description of the CategoricalCategoryCharacteristic"
@@ -386,7 +415,7 @@ input CategoricalCategoryCharacteristicInput {
 "Input for creating a CategoricalCategoryCharacteristicValue."
 input CategoricalCategoryCharacteristicValueInput {
   "The id of the CategoryCharacteristic."
-  characteristicId: ID!
+  characteristicId: UUID!
   "The value of the CategoricalCategoryCharacteristicValue."
   value: String!
 }
@@ -418,7 +447,7 @@ input CategoryOrderInput {
 "Input for the createCategoricalCategoryCharacteristic mutation"
 input CreateCategoricalCategoryCharacteristicInput {
   "The Category that the CategoricalCategoryCharacteristicI belongs to"
-  categoryId: ID!
+  categoryId: UUID!
   "The description of the CategoricalCategoryCharacteristic"
   description: String!
   "The name of the CategoricalCategoryCharacteristic"
@@ -440,7 +469,7 @@ input CreateCategoryInput {
 "Input for the createNumericalCategoryCharacteristic mutation"
 input CreateNumericalCategoryCharacteristicInput {
   "The Category that the NumericalCategoryCharacteristic belongs to"
-  categoryId: ID!
+  categoryId: UUID!
   "The description of the NumericalCategoryCharacteristic"
   description: String!
   "The name of the NumericalCategoryCharacteristic"
@@ -452,7 +481,7 @@ input CreateNumericalCategoryCharacteristicInput {
 "Input for the createProduct mutation"
 input CreateProductInput {
   "The Categories this product is associated with."
-  categoryIds: [ID!]!
+  categoryIds: [UUID!]!
   "The default ProductVariant of the Product."
   defaultVariant: ProductVariantInput!
   "An internal name to identify the Product, not visible to customers."
@@ -468,7 +497,7 @@ input CreateProductVariantInput {
   "If true, the ProductVariant is visible to customers."
   isPubliclyVisible: Boolean!
   "The id of the Product this ProductVariant belongs to."
-  productId: ID!
+  productId: UUID!
 }
 
 "Input for the createProductVariantVersion mutation"
@@ -484,7 +513,7 @@ input CreateProductVariantVersionInput {
   "The NumericalCategoryCharacteristicValues of the ProductVariant, must be compatible with the Categories of the associated Product."
   numericalCharacteristicValues: [NumericalCategoryCharacteristicValueInput!]!
   "The id of the ProductVariant this ProductVariantVersion belongs to."
-  productVariantId: ID!
+  productVariantId: UUID!
   "The retail price of the ProductVariant."
   retailPrice: Int!
 }
@@ -502,7 +531,7 @@ input NumericalCategoryCharacteristicInput {
 "Input for creating a NumericalCategoryCharacteristicValue."
 input NumericalCategoryCharacteristicValueInput {
   "The id of the CategoryCharacteristic."
-  characteristicId: ID!
+  characteristicId: UUID!
   "The value of the NumericalCategoryCharacteristicValue."
   value: Float!
 }
