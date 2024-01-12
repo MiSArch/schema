@@ -14,6 +14,32 @@ input AddWishlistInput {
 }
 
 
+"""
+Describes the fields that a foreign types can be ordered by.
+
+Only the Id valid at the moment.
+"""
+enum CommonOrderField {
+	"""
+	Orders by "id".
+	"""
+	ID
+}
+
+"""
+Specifies the order of foreign types.
+"""
+input CommonOrderInput {
+	"""
+	Order direction of wishlists.
+	"""
+	direction: OrderDirection
+	"""
+	Field that wishlists should be ordered by.
+	"""
+	field: CommonOrderField
+}
+
 scalar DateTime
 
 
@@ -67,6 +93,34 @@ enum OrderDirection {
 	DESC
 }
 
+"""
+Foreign type of a product variant.
+"""
+type ProductVariant @key(fields: "id", resolvable: false) {
+	"""
+	UUID of the product variant.
+	"""
+	id: UUID!
+}
+
+"""
+A connection of ProductVariants.
+"""
+type ProductVariantConnection @shareable {
+	"""
+	The resulting entities.
+	"""
+	nodes: [ProductVariant!]!
+	"""
+	Whether this connection has a next page.
+	"""
+	hasNextPage: Boolean!
+	"""
+	The total amount of items in this connection.
+	"""
+	totalCount: Int!
+}
+
 type Query {
 	"""
 	Retrieves all wishlists.
@@ -83,7 +137,7 @@ type Query {
 		"""
 		Specifies the order in which wishlists are retrieved.
 		"""
-		orderBy: WishlistOrder
+		orderBy: WishlistOrderInput
 	): WishlistConnection!
 	"""
 	Retrieves wishlist of specific id.
@@ -97,16 +151,6 @@ type Query {
 }
 
 
-"""
-A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
-Strings within GraphQL. UUIDs are used to assign unique identifiers to
-entities without requiring a central allocating authority.
-
-# References
-
-* [Wikipedia: Universally Unique Identifier](http://en.wikipedia.org/wiki/Universally_unique_identifier)
-* [RFC4122: A Universally Unique IDentifier (UUID) URN Namespace](http://tools.ietf.org/html/rfc4122)
-"""
 scalar UUID
 
 input UpdateWishlistInput {
@@ -125,21 +169,27 @@ input UpdateWishlistInput {
 }
 
 """
+Foreign type of a user.
+"""
+type User @key(fields: "id", resolvable: false) {
+	"""
+	UUID of the user.
+	"""
+	id: UUID!
+}
+
+"""
 The Wishlist of a user.
 """
-type Wishlist {
+type Wishlist @key(fields: "id") {
 	"""
 	Wishlist UUID.
 	"""
-	id: String!
+	id: UUID!
 	"""
-	UUID of user.
+	User.
 	"""
-	userId: String!
-	"""
-	UUIDs product variants in Wishlist.
-	"""
-	productVariantIds: [String!]!
+	user: User!
 	"""
 	Name of Wishlist.
 	"""
@@ -152,12 +202,29 @@ type Wishlist {
 	Timestamp when Wishlist was last updated.
 	"""
 	lastUpdatedAt: DateTime!
+	"""
+	Retrieves product variants.
+	"""
+	productVariants(
+		"""
+		Describes that the `first` N wishlists should be retrieved.
+		"""
+		first: Int,
+		"""
+		Describes how many wishlists should be skipped at the beginning.
+		"""
+		skip: Int,
+		"""
+		Specifies the order in which wishlists are retrieved.
+		"""
+		orderBy: CommonOrderInput
+	): ProductVariantConnection!
 }
 
 """
 A connection of Wishlists.
 """
-type WishlistConnection {
+type WishlistConnection @shareable {
 	"""
 	The resulting entities.
 	"""
@@ -170,20 +237,6 @@ type WishlistConnection {
 	The total amount of items in this connection.
 	"""
 	totalCount: Int!
-}
-
-"""
-Specifies the order of wishlists.
-"""
-input WishlistOrder {
-	"""
-	Order direction of wishlists.
-	"""
-	direction: OrderDirection
-	"""
-	Field that wishlists should be ordered by.
-	"""
-	field: WishlistOrderField
 }
 
 """
@@ -212,7 +265,23 @@ enum WishlistOrderField {
 	LAST_UPDATED_AT
 }
 
-schema {
-	query: Query
-	mutation: Mutation
+"""
+Specifies the order of wishlists.
+"""
+input WishlistOrderInput {
+	"""
+	Order direction of wishlists.
+	"""
+	direction: OrderDirection
+	"""
+	Field that wishlists should be ordered by.
+	"""
+	field: WishlistOrderField
 }
+
+extend schema @link(
+	url: "https://specs.apollo.dev/federation/v2.3",
+	import: ["@key", "@tag", "@shareable", "@inaccessible", "@override", "@external", "@provides", "@requires", "@composeDirective", "@interfaceObject"]
+)
+directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+directive @skip(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
