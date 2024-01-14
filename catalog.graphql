@@ -362,6 +362,8 @@ enum CategoryCharacteristicValueOrderField {
 enum CategoryOrderField {
   "Order categories by their id"
   ID
+  "Order categories by their name"
+  NAME
 }
 
 "Order direction"
@@ -376,6 +378,8 @@ enum OrderDirection {
 enum ProductOrderField {
   "Order products by their id"
   ID
+  "Order products by their internal name"
+  INTERNAL_NAME
 }
 
 "ProductVariant order fields"
@@ -386,8 +390,12 @@ enum ProductVariantOrderField {
 
 "ProductVariantVersion order fields"
 enum ProductVariantVersionOrderField {
+  "Order productVariantVersions by their creation date"
+  CREATED_AT
   "Order productVariantVersions by their id"
   ID
+  "Order productVariantVersions by their version"
+  VERSION
 }
 
 "A slightly refined version of RFC-3339 compliant DateTime Scalar"
@@ -423,25 +431,25 @@ input CategoricalCategoryCharacteristicValueInput {
 "CategoryCharacteristic order"
 input CategoryCharacteristicOrderInput {
   "The direction to order by"
-  direction: OrderDirection!
+  direction: OrderDirection
   "The field to order by"
-  field: CategoryCharacteristicOrderField!
+  field: CategoryCharacteristicOrderField
 }
 
 "CategoryCharacteristicValue order"
 input CategoryCharacteristicValueOrderInput {
   "The direction to order by"
-  direction: OrderDirection!
+  direction: OrderDirection
   "The field to order by"
-  field: CategoryCharacteristicValueOrderField!
+  field: CategoryCharacteristicValueOrderField
 }
 
 "Category order"
 input CategoryOrderInput {
   "The direction to order by"
-  direction: OrderDirection!
+  direction: OrderDirection
   "The field to order by"
-  field: CategoryOrderField!
+  field: CategoryOrderField
 }
 
 "Input for the createCategoricalCategoryCharacteristic mutation"
@@ -539,9 +547,9 @@ input NumericalCategoryCharacteristicValueInput {
 "Product order"
 input ProductOrderInput {
   "The direction to order by"
-  direction: OrderDirection!
+  direction: OrderDirection
   "The field to order by"
-  field: ProductOrderField!
+  field: ProductOrderField
 }
 
 "Input for creating a product variant"
@@ -555,9 +563,9 @@ input ProductVariantInput {
 "ProductVariant order"
 input ProductVariantOrderInput {
   "The direction to order by"
-  direction: OrderDirection!
+  direction: OrderDirection
   "The field to order by"
-  field: ProductVariantOrderField!
+  field: ProductVariantOrderField
 }
 
 "Input for creating a ProductVariantVersion."
@@ -579,7 +587,7 @@ input ProductVariantVersionInput {
 "ProductVariantVersion order"
 input ProductVariantVersionOrderInput {
   "The direction to order by"
-  direction: OrderDirection!
+  direction: OrderDirection
   "The field to order by"
-  field: ProductVariantVersionOrderField!
+  field: ProductVariantVersionOrderField
 }
