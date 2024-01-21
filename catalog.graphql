@@ -75,6 +75,15 @@ type CategoricalCategoryCharacteristic implements CategoryCharacteristic & Node 
   id: UUID!
   "The name of the CategoryCharacteristic."
   name: String!
+  "Get all associated values"
+  values(
+    "Number of items to return"
+    first: Int,
+    "Ordering"
+    orderBy: CategoricalCategoryCharacteristicValueOrderInput,
+    "Number of items to skip"
+    skip: Int
+  ): CategoricalCategoryCharacteristicValueConnection!
 }
 
 "A possible value for a categorical characteristic."
@@ -83,6 +92,16 @@ type CategoricalCategoryCharacteristicValue implements CategoryCharacteristicVal
   characteristic: CategoryCharacteristic!
   "The value of the characteristic."
   value: String!
+}
+
+"A connection to a list of `CategoricalCategoryCharacteristicValue` values."
+type CategoricalCategoryCharacteristicValueConnection @shareable {
+  "Whether this connection has a next page"
+  hasNextPage: Boolean!
+  "The resulting items."
+  nodes: [CategoricalCategoryCharacteristicValue!]!
+  "The total amount of items in this connection"
+  totalCount: Int!
 }
 
 "A category"
@@ -117,7 +136,7 @@ type Category implements Node @key(fields : "id", resolvable : true) {
 type CategoryCharacteristicConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
-  "The resulting ."
+  "The resulting items."
   nodes: [CategoryCharacteristic!]!
   "The total amount of items in this connection"
   totalCount: Int!
@@ -127,7 +146,7 @@ type CategoryCharacteristicConnection @shareable {
 type CategoryCharacteristicValueConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
-  "The resulting ."
+  "The resulting items."
   nodes: [CategoryCharacteristicValue!]!
   "The total amount of items in this connection"
   totalCount: Int!
@@ -137,7 +156,7 @@ type CategoryCharacteristicValueConnection @shareable {
 type CategoryConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
-  "The resulting ."
+  "The resulting items."
   nodes: [Category!]!
   "The total amount of items in this connection"
   totalCount: Int!
@@ -232,7 +251,7 @@ type Product implements Node @key(fields : "id", resolvable : true) {
 type ProductConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
-  "The resulting ."
+  "The resulting items."
   nodes: [Product!]!
   "The total amount of items in this connection"
   totalCount: Int!
@@ -263,7 +282,7 @@ type ProductVariant implements Node @key(fields : "id", resolvable : true) {
 type ProductVariantConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
-  "The resulting ."
+  "The resulting items."
   nodes: [ProductVariant!]!
   "The total amount of items in this connection"
   totalCount: Int!
@@ -302,7 +321,7 @@ type ProductVariantVersion implements Node @key(fields : "id", resolvable : true
 type ProductVariantVersionConnection @shareable {
   "Whether this connection has a next page"
   hasNextPage: Boolean!
-  "The resulting ."
+  "The resulting items."
   nodes: [ProductVariantVersion!]!
   "The total amount of items in this connection"
   totalCount: Int!
@@ -326,6 +345,11 @@ type Query {
     "The id of the category"
     id: UUID!
   ): Category!
+  "Get a characteristic by id"
+  categoryCharacteristic(
+    "The id of the characteristic"
+    id: UUID!
+  ): CategoryCharacteristic!
   "Get a product by id"
   product(
     "The id of the product"
@@ -344,6 +368,12 @@ type Query {
 
 type _Service {
   sdl: String!
+}
+
+"CategoricalCategoryCharacteristicValue order fields"
+enum CategoricalCategoryCharacteristicValueOrderField {
+  "Order CategoricalCategoryCharacteristicValue by their id"
+  VALUE
 }
 
 "CategoryCharacteristic order fields"
@@ -426,6 +456,14 @@ input CategoricalCategoryCharacteristicValueInput {
   characteristicId: UUID!
   "The value of the CategoricalCategoryCharacteristicValue."
   value: String!
+}
+
+"CategoricalCategoryCharacteristicValue order"
+input CategoricalCategoryCharacteristicValueOrderInput {
+  "The direction to order by"
+  direction: OrderDirection
+  "The field to order by"
+  field: CategoricalCategoryCharacteristicValueOrderField
 }
 
 "CategoryCharacteristic order"
