@@ -1,0 +1,29 @@
+name: Update docs submodule
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  schema:
+    name: Update docs submodule
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: "misarch/docs"
+          submodules: true
+      - name: Update submodule
+        run: |
+          cd schemas
+          git checkout ${{ github.sha }}
+      - uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: Update schemas submodule
+          branch: update/schemas
+          token: ${{ secrets.DOCS_PUSH_SECRET }}
+      - name: Set to auto merge
+        run: gh pr merge update/schemas --auto --merge -R misarch/docs
+        env:
+          GH_TOKEN: ${{ secrets.DOCS_PUSH_SECRET }}
