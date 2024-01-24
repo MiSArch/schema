@@ -123,23 +123,6 @@ type ProductVariantConnection @shareable {
 
 type Query {
 	"""
-	Retrieves all wishlists.
-	"""
-	wishlists(
-		"""
-		Describes that the `first` N wishlists should be retrieved.
-		"""
-		first: Int,
-		"""
-		Describes how many wishlists should be skipped at the beginning.
-		"""
-		skip: Int,
-		"""
-		Specifies the order in which wishlists are retrieved.
-		"""
-		orderBy: WishlistOrderInput
-	): WishlistConnection!
-	"""
 	Retrieves wishlist of specific id.
 	"""
 	wishlist(
@@ -169,13 +152,30 @@ input UpdateWishlistInput {
 }
 
 """
-Foreign type of a user.
+Type of a user owning wishlists.
 """
-type User @key(fields: "id", resolvable: false) {
+type User @key(fields: "id") {
 	"""
 	UUID of the user.
 	"""
 	id: UUID!
+	"""
+	Retrieves wishlists of user.
+	"""
+	wishlists(
+		"""
+		Describes that the `first` N wishlists should be retrieved.
+		"""
+		first: Int,
+		"""
+		Describes how many wishlists should be skipped at the beginning.
+		"""
+		skip: Int,
+		"""
+		Specifies the order in which wishlists are retrieved.
+		"""
+		orderBy: WishlistOrderInput
+	): WishlistConnection!
 }
 
 """
@@ -207,15 +207,15 @@ type Wishlist @key(fields: "id") {
 	"""
 	productVariants(
 		"""
-		Describes that the `first` N wishlists should be retrieved.
+		Describes that the `first` N product variants should be retrieved.
 		"""
 		first: Int,
 		"""
-		Describes how many wishlists should be skipped at the beginning.
+		Describes how many product variants should be skipped at the beginning.
 		"""
 		skip: Int,
 		"""
-		Specifies the order in which wishlists are retrieved.
+		Specifies the order in which product variants are retrieved.
 		"""
 		orderBy: CommonOrderInput
 	): ProductVariantConnection!
