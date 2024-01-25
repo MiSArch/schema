@@ -9,26 +9,8 @@ directive @deprecated(
     reason: String = "No longer supported"
   ) on FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM_VALUE | INPUT_FIELD_DEFINITION
 
-"Directs the executor to include this field or fragment only when the `if` argument is true"
-directive @include(
-    "Included when true."
-    if: Boolean!
-  ) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
-
-"Space separated list of primary keys needed to access federated object"
-directive @key(fields: FieldSet!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
-
-"Links definitions within the document to external schemas."
-directive @link(as: String, import: [link__Import], url: String!) repeatable on SCHEMA
-
 "Indicates an Input Object is a OneOf Input Object."
 directive @oneOf on INPUT_OBJECT
-
-"Directs the executor to skip this field or fragment when the `if` argument is true."
-directive @skip(
-    "Skipped when true."
-    if: Boolean!
-  ) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 
 "Exposes a URL that specifies the behaviour of this scalar."
 directive @specifiedBy(
@@ -109,8 +91,6 @@ scalar UUID
 
 "Federation scalar type used to represent any external entities passed to _entities query."
 scalar _Any
-
-scalar link__Import
 
 input CreateUserDTOInput {
   name: String!
