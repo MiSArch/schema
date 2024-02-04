@@ -172,6 +172,16 @@ type Mutation {
     "Input for the createProductVariantVersion mutation"
     input: CreateProductVariantVersionInput!
   ): ProductVariantVersion!
+  "Update a product"
+  updateProduct(
+    "Input for the updateProduct mutation"
+    input: UpdateProductInput!
+  ): Product!
+  "Update a product variant"
+  updateProductVariant(
+    "Input for the updateProductVariant mutation"
+    input: UpdateProductVariantInput!
+  ): ProductVariant!
 }
 
 "A numerical characteristic of a Category."
@@ -605,4 +615,22 @@ input ProductVariantVersionOrderInput {
   direction: OrderDirection
   "The field to order by"
   field: ProductVariantVersionOrderField
+}
+
+"Input for the updateProduct mutation."
+input UpdateProductInput {
+  "UUID of the product to be updated"
+  id: UUID!
+  "If present, new value for internalName"
+  internalName: String
+  "If present, new value for isPubliclyVisible"
+  isPubliclyVisible: Boolean
+}
+
+"Input for the updateProductVariant mutation."
+input UpdateProductVariantInput {
+  "UUID of the product variant to be updated"
+  id: UUID!
+  "If present, new value for isPubliclyVisible"
+  isPubliclyVisible: Boolean
 }
