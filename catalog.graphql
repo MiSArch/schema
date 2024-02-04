@@ -42,7 +42,7 @@ interface Node {
   id: UUID!
 }
 
-union _Entity = CategoricalCategoryCharacteristic | Category | NumericalCategoryCharacteristic | Product | ProductVariant | ProductVariantVersion
+union _Entity = CategoricalCategoryCharacteristic | Category | NumericalCategoryCharacteristic | Product | ProductVariant | ProductVariantVersion | TaxRate
 
 "A categorical characteristic of a category."
 type CategoricalCategoryCharacteristic implements CategoryCharacteristic & Node @key(fields : "id", resolvable : true) {
@@ -302,6 +302,8 @@ type ProductVariantVersion implements Node @key(fields : "id", resolvable : true
   productVariant: ProductVariant!
   "The retail price of the ProductVariantVersion."
   retailPrice: Int!
+  "The associated TaxRate."
+  taxRate: TaxRate!
   "The version of the ProductVariantVersion."
   version: Int!
 }
@@ -353,6 +355,12 @@ type Query {
     "Number of items to skip"
     skip: Int
   ): ProductConnection!
+}
+
+"A TaxRate."
+type TaxRate implements Node @key(fields : "id", resolvable : false) {
+  "The ID of the node."
+  id: UUID!
 }
 
 type _Service {
@@ -549,6 +557,8 @@ input CreateProductVariantVersionInput {
   productVariantId: UUID!
   "The retail price of the ProductVariant."
   retailPrice: Int!
+  "The associated TaxRate"
+  taxRateId: UUID!
 }
 
 "Input to create a characteristic whose values have arithmetic meaning, i.e. '8GB'"
@@ -607,6 +617,8 @@ input ProductVariantVersionInput {
   numericalCharacteristicValues: [NumericalCategoryCharacteristicValueInput!]!
   "The retail price of the ProductVariant."
   retailPrice: Int!
+  "The associated TaxRate"
+  taxRateId: UUID!
 }
 
 "ProductVariantVersion order"
