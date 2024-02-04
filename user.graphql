@@ -1,6 +1,5 @@
-schema @link(import : ["@key", "FieldSet"], url : "https://specs.apollo.dev/federation/v2.5"){
+schema @link(import : ["@key", "@shareable", "FieldSet"], url : "https://specs.apollo.dev/federation/v2.5"){
   query: Query
-  mutation: Mutation
 }
 
 "Marks the field, argument, input field or enum value as deprecated"
@@ -26,14 +25,6 @@ interface Node {
 
 union _Entity = User
 
-type Mutation {
-  "Create TEST user"
-  createTestUser(
-    "Definition of the Test user"
-    input: CreateUserDTOInput!
-  ): User!
-}
-
 type Query {
   "Union of all types that use the @key directive, including both types native to the schema and extended types"
   _entities(representations: [_Any!]!): [_Entity]!
@@ -43,6 +34,15 @@ type Query {
     "The id of the user"
     id: UUID!
   ): User!
+  "Get all users"
+  users(
+    "Number of items to return"
+    first: Int,
+    "Ordering"
+    orderBy: UserOrderInput,
+    "Number of items to skip"
+    skip: Int
+  ): UserConnection!
 }
 
 "A user."
@@ -51,14 +51,26 @@ type User implements Node @key(fields : "id", resolvable : true) {
   birthday: Date
   "The date the user joined"
   dateJoined: DateTime!
+  "The first name of the user"
+  firstName: String!
   "The gender of the user"
   gender: Gender
   "The ID of the node."
   id: UUID!
-  "The name of the user"
-  name: String!
+  "The last name of the user"
+  lastName: String!
   "The username of the user"
   username: String!
+}
+
+"A connection to a list of `User` values."
+type UserConnection @shareable {
+  "Whether this connection has a next page"
+  hasNextPage: Boolean!
+  "The resulting items."
+  nodes: [User!]!
+  "The total amount of items in this connection"
+  totalCount: Int!
 }
 
 type _Service {
@@ -77,6 +89,22 @@ enum Gender {
   OTHER
 }
 
+"Order direction"
+enum OrderDirection {
+  "Ascending order"
+  ASC
+  "Descending order"
+  DESC
+}
+
+"User order fields"
+enum UserOrderField {
+  "Order users by their id"
+  ID
+  "Order users by their username"
+  USERNAME
+}
+
 "An RFC-3339 compliant Full Date Scalar"
 scalar Date
 
@@ -92,7 +120,10 @@ scalar UUID
 "Federation scalar type used to represent any external entities passed to _entities query."
 scalar _Any
 
-input CreateUserDTOInput {
-  name: String!
-  username: String!
+"User order"
+input UserOrderInput {
+  "The direction to order by"
+  direction: OrderDirection
+  "The field to order by"
+  field: UserOrderField
 }
