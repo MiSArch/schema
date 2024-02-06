@@ -102,6 +102,8 @@ type Category implements Node @key(fields : "id", resolvable : true) {
   name: String!
   "Get all associated products"
   products(
+    "Filtering"
+    filter: ProductFilterInput,
     "Number of items to return"
     first: Int,
     "Ordering"
@@ -227,6 +229,8 @@ type Product implements Node @key(fields : "id", resolvable : true) {
   isPubliclyVisible: Boolean!
   "Get all associated ProductVariants"
   variants(
+    "Filtering"
+    filter: ProductVariantFilterInput,
     "Number of items to return"
     first: Int,
     "Ordering"
@@ -348,6 +352,8 @@ type Query {
   ): Product!
   "Get all products"
   products(
+    "Filtering"
+    filter: ProductFilterInput,
     "Number of items to return"
     first: Int,
     "Ordering"
@@ -579,12 +585,22 @@ input NumericalCategoryCharacteristicValueInput {
   value: Float!
 }
 
+"Product filter"
+input ProductFilterInput {
+  isPubliclyVisible: Boolean
+}
+
 "Product order"
 input ProductOrderInput {
   "The direction to order by"
   direction: OrderDirection
   "The field to order by"
   field: ProductOrderField
+}
+
+"Product variant filter"
+input ProductVariantFilterInput {
+  isPubliclyVisible: Boolean
 }
 
 "Input for creating a product variant"
