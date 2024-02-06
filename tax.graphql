@@ -104,12 +104,12 @@ type TaxRateConnection @shareable {
 type TaxRateVersion implements Node @key(fields : "id", resolvable : true) {
   "Time stamp when the TaxRateVersion was created"
   createdAt: DateTime!
-  "The current version."
-  currentVersion: TaxRate!
   "The ID of the node."
   id: UUID!
   "The rate of the TaxRateVersion"
   rate: Float!
+  "The associated TaxRate."
+  taxRate: TaxRate!
   "Version of the TaxRateVersion"
   version: Int!
 }
