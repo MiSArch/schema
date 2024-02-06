@@ -51,7 +51,7 @@ type Query {
 type User implements Node @key(fields : "id", resolvable : true) {
   "The birthday of the user"
   birthday: Date
-  "The date the user joined"
+  "The date when the user joined"
   dateJoined: DateTime!
   "The first name of the user"
   firstName: String!
