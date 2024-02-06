@@ -29,6 +29,8 @@ type Query {
   "Union of all types that use the @key directive, including both types native to the schema and extended types"
   _entities(representations: [_Any!]!): [_Entity]!
   _service: _Service!
+  "Get the currently authenticated user"
+  currentUser: User
   "Get a user by id"
   user(
     "The id of the user"
