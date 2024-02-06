@@ -1,0 +1,289 @@
+input AddReviewInput {
+	"""
+	UUID of user owning the review.
+	"""
+	userId: UUID!
+	"""
+	UUID of product variant in review.
+	"""
+	productVariantId: UUID!
+	"""
+	Body of Review.
+	"""
+	body: String!
+	"""
+	Rating of Review in 1-5 stars.
+	"""
+	rating: Rating!
+	"""
+	Flag if review is visible, by default set to true.
+	"""
+	isVisible: Boolean
+}
+
+
+scalar DateTime
+
+
+
+
+type Mutation {
+	"""
+	Adds a review.
+	"""
+	addReview(
+		"""
+		AddReviewInput
+		"""
+		input: AddReviewInput!
+	): Review!
+	"""
+	Updates a specific review referenced with an id.
+	"""
+	updateReview(
+		"""
+		UpdateReviewInput
+		"""
+		input: UpdateReviewInput!
+	): Review!
+	"""
+	Deletes review of id.
+	"""
+	deleteReview(
+		"""
+		UUID of review to delete.
+		"""
+		id: UUID!
+	): Boolean!
+}
+
+"""
+GraphQL order direction.
+"""
+enum OrderDirection {
+	"""
+	Ascending order direction.
+	"""
+	ASC
+	"""
+	Descending order direction.
+	"""
+	DESC
+}
+
+type ProductVariant @key(fields: "id") {
+	"""
+	UUID of the product variant.
+	"""
+	id: UUID!
+	"""
+	Retrieves reviews of product variant.
+	"""
+	reviews(
+		"""
+		Describes that the `first` N reviews should be retrieved.
+		"""
+		first: Int,
+		"""
+		Describes how many reviews should be skipped at the beginning.
+		"""
+		skip: Int,
+		"""
+		Specifies the order in which reviews are retrieved.
+		"""
+		orderBy: ReviewOrderInput
+	): ReviewConnection!
+	"""
+	Retrieves average rating of product variant.
+	"""
+	averageRating: Float!
+}
+
+type Query {
+	"""
+	Retrieves all reviews.
+	"""
+	reviews(
+		"""
+		Describes that the `first` N reviews should be retrieved.
+		"""
+		first: Int,
+		"""
+		Describes how many reviews should be skipped at the beginning.
+		"""
+		skip: Int,
+		"""
+		Specifies the order in which reviews are retrieved.
+		"""
+		orderBy: ReviewOrderInput
+	): ReviewConnection!
+	"""
+	Retrieves review of specific id.
+	"""
+	review(
+		"""
+		UUID of review to retrieve.
+		"""
+		id: UUID!
+	): Review!
+}
+
+enum Rating {
+	ONE_STARS
+	TWO_STARS
+	THREE_STARS
+	FOUR_STARS
+	FIVE_STARS
+}
+
+"""
+The Review of a user.
+"""
+type Review {
+	"""
+	Review UUID.
+	"""
+	id: UUID!
+	"""
+	User.
+	"""
+	user: User!
+	"""
+	Product variant that review is about.
+	"""
+	productVariant: ProductVariant!
+	"""
+	Body of Review.
+	"""
+	body: String!
+	"""
+	Rating of Review in 1-5 stars.
+	"""
+	rating: Rating!
+	"""
+	Timestamp when Review was created.
+	"""
+	createdAt: DateTime!
+	"""
+	Timestamp when Review was created.
+	"""
+	lastUpdatedAt: DateTime!
+	"""
+	Flag if review is visible,
+	"""
+	isVisible: Boolean!
+}
+
+"""
+A connection of Reviews.
+"""
+type ReviewConnection @shareable {
+	"""
+	The resulting entities.
+	"""
+	nodes: [Review!]!
+	"""
+	Whether this connection has a next page.
+	"""
+	hasNextPage: Boolean!
+	"""
+	The total amount of items in this connection.
+	"""
+	totalCount: Int!
+}
+
+"""
+Describes the fields that a review can be ordered by.
+"""
+enum ReviewOrderField {
+	"""
+	Orders by "id".
+	"""
+	ID
+	"""
+	Orders by "user_id".
+	"""
+	USER_ID
+	"""
+	Orders by "product_variant".
+	"""
+	PRODUCT_VARIANT
+	"""
+	Orders by "rating".
+	"""
+	RATING
+	"""
+	Orders by "created_at".
+	"""
+	CREATED_AT
+}
+
+"""
+Specifies the order of reviews.
+"""
+input ReviewOrderInput {
+	"""
+	Order direction of reviews.
+	"""
+	direction: OrderDirection
+	"""
+	Field that reviews should be ordered by.
+	"""
+	field: ReviewOrderField
+}
+
+
+scalar UUID
+
+input UpdateReviewInput {
+	"""
+	UUID of review to update.
+	"""
+	id: UUID!
+	"""
+	Body of Review to update.
+	"""
+	body: String
+	"""
+	Rating of Review in 1-5 stars to update.
+	"""
+	rating: Rating
+	"""
+	Flag if review is visible.
+	"""
+	isVisible: Boolean
+}
+
+"""
+Type of a user owning reviews.
+"""
+type User @key(fields: "id") {
+	"""
+	UUID of the user.
+	"""
+	id: UUID!
+	"""
+	Retrieves reviews of user.
+	"""
+	reviews(
+		"""
+		Describes that the `first` N reviews should be retrieved.
+		"""
+		first: Int,
+		"""
+		Describes how many reviews should be skipped at the beginning.
+		"""
+		skip: Int,
+		"""
+		Specifies the order in which reviews are retrieved.
+		"""
+		orderBy: ReviewOrderInput
+	): ReviewConnection!
+}
+
+extend schema @link(
+	url: "https://specs.apollo.dev/federation/v2.3",
+	import: ["@key", "@tag", "@shareable", "@inaccessible", "@override", "@external", "@provides", "@requires", "@composeDirective", "@interfaceObject"]
+)
+directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+directive @skip(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
