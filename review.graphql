@@ -95,6 +95,8 @@ type ProductVariant @key(fields: "id") {
 	): ReviewConnection!
 	"""
 	Retrieves average rating of product variant.
+	
+	Filters reviews with `is_visible == false` to exclude them from the average rating.
 	"""
 	averageRating: Float!
 }
