@@ -647,6 +647,8 @@ input ProductVariantVersionOrderInput {
 
 "Input for the updateProduct mutation."
 input UpdateProductInput {
+  "If present, new value for defaultVariantId"
+  defaultVariantId: UUID
   "UUID of the product to be updated"
   id: UUID!
   "If present, new value for internalName"
