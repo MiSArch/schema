@@ -310,6 +310,8 @@ type ProductVariantVersion implements Node @key(fields : "id", resolvable : true
   taxRate: TaxRate!
   "The version of the ProductVariantVersion."
   version: Int!
+  "The weight of the ProductVariantVersion."
+  weight: Float!
 }
 
 "A connection to a list of `ProductVariantVersion` values."
@@ -565,6 +567,8 @@ input CreateProductVariantVersionInput {
   retailPrice: Int!
   "The associated TaxRate"
   taxRateId: UUID!
+  "The weight of a single instance of the ProductVariant."
+  weight: Float!
 }
 
 "Input to create a characteristic whose values have arithmetic meaning, i.e. '8GB'"
@@ -635,6 +639,8 @@ input ProductVariantVersionInput {
   retailPrice: Int!
   "The associated TaxRate"
   taxRateId: UUID!
+  "The weight of a single instance of the ProductVariant."
+  weight: Float!
 }
 
 "ProductVariantVersion order"
