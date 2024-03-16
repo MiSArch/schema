@@ -283,8 +283,8 @@ type ProductVariantConnection @shareable {
 
 "A version of a ProductVariant."
 type ProductVariantVersion implements Node @key(fields : "id", resolvable : true) {
-  "The amount of days for which an instance of the ProductVariantVersion can be returned after purchase"
-  canBeReturnedForDays: Float
+  "The amount of days for which an instance of the ProductVariantVersion can be returned after purchase, if null can be returned indefinitely."
+  canBeReturnedForDays: Int
   "Get all associated CategoryCharacteristicValues"
   characteristicValues(
     "Number of items to return"
@@ -551,8 +551,8 @@ input CreateProductVariantInput {
 
 "Input for the createProductVariantVersion mutation"
 input CreateProductVariantVersionInput {
-  "The amount of days for which an instance of the ProductVariant can be returned after purchase"
-  canBeReturnedForDays: Float
+  "The amount of days for which an instance of the ProductVariant can be returned after purchase, if null can be returned indefinitely."
+  canBeReturnedForDays: Int
   "The CategoricalCategoryCharacteristicValues of the ProductVariant, must be compatible with the Categories of the associated Product."
   categoricalCharacteristicValues: [CategoricalCategoryCharacteristicValueInput!]!
   "The description of the ProductVariant."
@@ -625,8 +625,8 @@ input ProductVariantOrderInput {
 
 "Input for creating a ProductVariantVersion."
 input ProductVariantVersionInput {
-  "The amount of days for which an instance of the ProductVariant can be returned after purchase"
-  canBeReturnedForDays: Float
+  "The amount of days for which an instance of the ProductVariant can be returned after purchase, if null can be returned indefinitely."
+  canBeReturnedForDays: Int
   "The CategoricalCategoryCharacteristicValues of the ProductVariant, must be compatible with the Categories of the associated Product."
   categoricalCharacteristicValues: [CategoricalCategoryCharacteristicValueInput!]!
   "The description of the ProductVariant."
