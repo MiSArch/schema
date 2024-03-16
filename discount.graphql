@@ -195,6 +195,16 @@ type DiscountUsageConnection @shareable {
   totalCount: Int!
 }
 
+"A list of discounts for a product variant (and count)"
+type DiscountsForProductVariant {
+  "The number of items to which the discounts should be applied."
+  count: Int!
+  "The list of applicable discounts"
+  discounts: [Discount!]!
+  "The product variant id for which discounts should be computed."
+  productVariantId: UUID!
+}
+
 type Mutation {
   "Create a new coupon"
   createCoupon(
@@ -296,11 +306,11 @@ type Query {
     "The id of the discount"
     id: UUID!
   ): Discount!
-  "Find all applicable discounts for a product variant and user, and list of coupon ids."
+  "Find all applicable discounts for a user and a list of product variant, count and coupon id triples"
   findApplicableDiscounts(
     "The input for the findApplicableDiscounts query."
     input: FindApplicableDiscountsInput!
-  ): [Discount!]! @inaccessible
+  ): [DiscountsForProductVariant!]! @inaccessible
 }
 
 "A user."
@@ -471,14 +481,22 @@ input DiscountUsageOrderInput {
 
 "Input for the findApplicableDiscounts query."
 input FindApplicableDiscountsInput @inaccessible {
+  "The order amount, used to filter applicable discounts."
+  orderAmount: Int!
+  "The list of product variants for which discounts should be computed."
+  productVariants: [FindApplicableDiscountsProductVariantInput!]!
+  "The user id for which discounts should be computed."
+  userId: UUID!
+}
+
+"Triple of a product variant id, a count, and a list of coupon ids for which discounts should be computed"
+input FindApplicableDiscountsProductVariantInput @inaccessible {
   "The number of items to which the discounts should be applied."
   count: Int!
   "The list of coupon ids for which discounts should be computed."
   couponIds: [UUID!]!
   "The product variant id for which discounts should be computed."
   productVariantId: UUID!
-  "The user id for which discounts should be computed."
-  userId: UUID!
 }
 
 "Input for the registerCoupon mutation"
