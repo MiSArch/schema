@@ -108,7 +108,7 @@ type Query {
 }
 
 "A return one or more OrderItems."
-type Return implements Node @key(fields : "id", resolvable : false) {
+type Return implements Node @key(fields : "id", resolvable : true) {
   "The ID of the node."
   id: UUID!
   "The associated Shipment"
