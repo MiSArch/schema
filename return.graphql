@@ -24,7 +24,7 @@ interface Node {
   id: UUID!
 }
 
-union _Entity = Order | OrderItem
+union _Entity = Order | OrderItem | Return
 
 type Mutation {
   "Create a new return"
@@ -65,7 +65,7 @@ type Query {
 }
 
 "A return."
-type Return implements Node {
+type Return implements Node @key(fields : "id", resolvable : true) {
   "The time the return was created."
   createdAt: DateTime!
   "The ID of the node."
