@@ -1,4 +1,4 @@
-schema @link(import : ["@key", "@shareable", "FieldSet"], url : "https://specs.apollo.dev/federation/v2.5"){
+schema @link(import : ["@inaccessible", "@key", "@shareable", "FieldSet"], url : "https://specs.apollo.dev/federation/v2.5"){
   query: Query
   mutation: Mutation
 }
@@ -84,6 +84,11 @@ type Query {
   "Union of all types that use the @key directive, including both types native to the schema and extended types"
   _entities(representations: [_Any!]!): [_Entity]!
   _service: _Service!
+  "Calculates the fees for a collection of shipped items. Should only be called by the Order service"
+  calculateShipmentFees(
+    "The input for the calculateShipmentFees query."
+    input: CalculateShipmentFeesInput!
+  ): Int! @inaccessible
   "Get a shipmentMethod by id"
   shipmentMethod(
     "The id of the shipmentMethod"
@@ -254,6 +259,12 @@ input ArchiveShipmentMethodInput {
   id: UUID!
 }
 
+"Input for calculateShipmentFees query."
+input CalculateShipmentFeesInput @inaccessible {
+  "The items to calculate the shipment fees for."
+  items: [ProductVariantVersionWithQuantityAndShipmentMethodInput!]!
+}
+
 "Input for the createShipmentMethod mutation."
 input CreateShipmentMethodInput {
   "The base fees for the shipment method."
@@ -276,6 +287,16 @@ input OrderItemOrderInput {
   direction: OrderDirection
   "The field to order by"
   field: OrderItemOrderField
+}
+
+"Input for a product variant version with a quantity and shipment method."
+input ProductVariantVersionWithQuantityAndShipmentMethodInput {
+  "The product variant version id."
+  productVariantVersionId: UUID!
+  "The quantity of the product variant version."
+  quantity: Int!
+  "The id of the shipment method."
+  shipmentMethodId: UUID!
 }
 
 "Input for a product variant version with a quantity."
