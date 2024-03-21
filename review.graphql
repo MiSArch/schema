@@ -1,4 +1,5 @@
-input AddReviewInput {
+
+input CreateReviewInput {
 	"""
 	UUID of user owning the review.
 	"""
@@ -21,7 +22,6 @@ input AddReviewInput {
 	isVisible: Boolean
 }
 
-
 scalar DateTime
 
 
@@ -29,13 +29,13 @@ scalar DateTime
 
 type Mutation {
 	"""
-	Adds a review.
+	Adds a review for a user and a product variant with a content, rating and visibility.
 	"""
-	addReview(
+	createReview(
 		"""
-		AddReviewInput
+		CreateReviewInput
 		"""
-		input: AddReviewInput!
+		input: CreateReviewInput!
 	): Review!
 	"""
 	Updates a specific review referenced with an id.
