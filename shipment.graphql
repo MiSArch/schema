@@ -50,7 +50,7 @@ type Order implements Node @key(fields : "id", resolvable : true) {
   "The ID of the node."
   id: UUID!
   "Get all associated Shipments"
-  variants(
+  shipments(
     "Filtering"
     filter: ShipmentFilterInput,
     "Number of items to return"
