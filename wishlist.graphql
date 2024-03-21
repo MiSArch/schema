@@ -1,18 +1,3 @@
-input AddWishlistInput {
-	"""
-	UUID of user owning the wishlist.
-	"""
-	userId: UUID!
-	"""
-	UUIDs of product variants in wishlist.
-	"""
-	productVariantIds: [UUID!]!
-	"""
-	Wishlist name.
-	"""
-	name: String!
-}
-
 
 """
 Describes the fields that a foreign types can be ordered by.
@@ -40,6 +25,21 @@ input CommonOrderInput {
 	field: CommonOrderField
 }
 
+input CreateWishlistInput {
+	"""
+	UUID of user owning the wishlist.
+	"""
+	userId: UUID!
+	"""
+	UUIDs of product variants in wishlist.
+	"""
+	productVariantIds: [UUID!]!
+	"""
+	Wishlist name.
+	"""
+	name: String!
+}
+
 scalar DateTime
 
 
@@ -51,11 +51,11 @@ type Mutation {
 	
 	Formats UUIDs as hyphenated lowercase Strings.
 	"""
-	addWishlist(
+	createWishlist(
 		"""
-		AddWishlistInput
+		CreateWishlistInput
 		"""
-		input: AddWishlistInput!
+		input: CreateWishlistInput!
 	): Wishlist!
 	"""
 	Updates name and/or product_variant_ids of a specific wishlist referenced with an id.
