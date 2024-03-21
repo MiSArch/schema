@@ -24,7 +24,7 @@ interface Node {
   id: UUID!
 }
 
-union _Entity = Order | OrderItem | Return
+union _Entity = Order | OrderItem | Return | User
 
 type Mutation {
   "Create a new return"
@@ -62,6 +62,20 @@ type Query {
   "Union of all types that use the @key directive, including both types native to the schema and extended types"
   _entities(representations: [_Any!]!): [_Entity]!
   _service: _Service!
+  "Get a return by id"
+  return(
+    "The id of the return"
+    id: UUID!
+  ): Return!
+  "Get all returns"
+  returns(
+    "Number of items to return"
+    first: Int,
+    "Ordering"
+    orderBy: ReturnOrderInput,
+    "Number of items to skip"
+    skip: Int
+  ): ReturnConnection!
 }
 
 "A return."
@@ -87,6 +101,31 @@ type Return implements Node @key(fields : "id", resolvable : true) {
   ): OrderItemConnection!
 }
 
+"A connection to a list of `Return` values."
+type ReturnConnection @shareable {
+  "Whether this connection has a next page"
+  hasNextPage: Boolean!
+  "The resulting items."
+  nodes: [Return!]!
+  "The total amount of items in this connection"
+  totalCount: Int!
+}
+
+"A user."
+type User implements Node @key(fields : "id", resolvable : true) {
+  "The ID of the node."
+  id: UUID!
+  "Get all returns of this user"
+  returns(
+    "Number of items to return"
+    first: Int,
+    "Ordering"
+    orderBy: ReturnOrderInput,
+    "Number of items to skip"
+    skip: Int
+  ): ReturnConnection!
+}
+
 type _Service {
   sdl: String!
 }
@@ -103,6 +142,12 @@ enum OrderDirection {
   ASC
   "Descending order"
   DESC
+}
+
+"Return order fields"
+enum ReturnOrderField {
+  "Order returns by their id"
+  ID
 }
 
 "A slightly refined version of RFC-3339 compliant DateTime Scalar"
@@ -131,4 +176,12 @@ input CreateReturnInput {
   orderItemIds: [UUID!]!
   "The reason for the return."
   reason: String!
+}
+
+"Direction to sort returns in"
+input ReturnOrderInput {
+  "The direction to order by"
+  direction: OrderDirection
+  "The field to order by"
+  field: ReturnOrderField
 }
