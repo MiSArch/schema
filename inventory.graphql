@@ -23,7 +23,7 @@ enum link__Purpose {
 scalar link__Import
 
 """Foreign type ProductVariant"""
-type ProductVariant @key(key: "id") {
+type ProductVariant @key(fields: "id") {
   """The uuid identifier of the product variant"""
   id: UUID!
   """A product item connection for referenced product items in stock"""
@@ -91,7 +91,7 @@ enum ProductItemStatus {
 }
 
 """A product Item of a product variant"""
-type ProductItem @key(key: "id") {
+type ProductItem @key(fields: "id") {
   """The uuid identifier of the product item"""
   id: UUID!
   """The corresponding product variant"""
