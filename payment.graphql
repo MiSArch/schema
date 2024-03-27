@@ -23,7 +23,7 @@ enum link__Purpose {
 scalar link__Import
 
 """Foreign type User"""
-type User @key(key: "id") {
+type User @key(fields: "id") {
   """The uuid identifier of the user"""
   id: UUID!
   """A connection for an users payment informations."""
@@ -83,7 +83,7 @@ enum PaymentMethod {
 }
 
 """A stored payment information of an user"""
-type PaymentInformation @key(key: "id") {
+type PaymentInformation @key(fields: "id") {
   """The uuid identifier of the payment information"""
   id: UUID!
   """The corresponding payment method"""
@@ -158,7 +158,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 """A payment of an invoice or return"""
-type Payment @key(key: "id") {
+type Payment @key(fields: "id") {
   """The uuid identifier of the payment"""
   id: UUID!
   """Payment Amount in the smallest currency unit (e.g. cents)"""
