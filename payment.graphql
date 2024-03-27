@@ -1,24 +1,39 @@
-extend schema
-  @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@composeDirective", "@extends", "@external", "@inaccessible", "@interfaceObject", "@key", "@override", "@provides", "@requires", "@shareable", "@tag"])
+schema @link(url: "https://specs.apollo.dev/federation/v2.5") {
+  query: Query
+  mutation: Mutation
+}
+
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
+
+directive @key(fields: FieldSet!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
+
+directive @shareable repeatable on OBJECT | FIELD_DEFINITION
+
+enum link__Purpose {
+  """
+  `SECURITY` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  `EXECUTION` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+scalar link__Import
 
 """Foreign type User"""
-type User
-  @key(fields: "id")
-{
+type User @key(key: "id") {
   """The uuid identifier of the user"""
   id: UUID!
-
   """A connection for an users payment informations."""
   paymentInformations(
     """Number of items to skip"""
     skip: Int = 0
-
     """Number of items to return"""
     first: Int = 2147483647
-
     """Ordering"""
     orderBy: PaymentInformationOrder
-
     """Filtering"""
     filter: PaymentInformationFilter
   ): PaymentInformationConnection
@@ -31,7 +46,6 @@ scalar UUID
 input PaymentInformationOrder {
   """The field to order by"""
   field: PaymentInformationOrderField
-
   """The direction to order by"""
   direction: OrderDirection
 }
@@ -46,7 +60,6 @@ enum PaymentInformationOrderField {
 enum OrderDirection {
   """Ascending Order"""
   ASC
-
   """Decending Order"""
   DESC
 }
@@ -55,7 +68,6 @@ enum OrderDirection {
 input PaymentInformationFilter {
   """Connected user id"""
   user: UUID
-
   """Linked payment method"""
   paymentMethod: PaymentMethod
 }
@@ -64,41 +76,30 @@ input PaymentInformationFilter {
 enum PaymentMethod {
   """The user pays after ordering the product"""
   INVOICE
-
   """The user pays before the product is shipped"""
   PREPAYMENT
-
   """The amount is charged to the users credit card"""
   CREDIT_CARD
 }
 
 """A stored payment information of an user"""
-type PaymentInformation
-  @key(fields: "id")
-{
+type PaymentInformation @key(key: "id") {
   """The uuid identifier of the payment information"""
   id: UUID!
-
   """The corresponding payment method"""
   paymentMethod: PaymentMethod!
-
   """The details for the User to identify the payment method"""
   publicMethodDetails: JSONObject
-
   """The user who owns the payment information"""
   user: User!
-
   """A connection for an users payments made with a payment information."""
   payments(
     """Number of items to skip"""
     skip: Int = 0
-
     """Number of items to return"""
     first: Int = 2147483647
-
     """Ordering"""
     orderBy: PaymentOrder
-
     """Filtering"""
     filter: PaymentFilter
   ): PaymentConnection
@@ -113,7 +114,6 @@ scalar JSONObject
 input PaymentOrder {
   """The field to order by"""
   field: PaymentOrderField
-
   """The direction to order by"""
   direction: OrderDirection
 }
@@ -128,16 +128,12 @@ enum PaymentOrderField {
 input PaymentFilter {
   """Current payment status"""
   status: PaymentStatus
-
   """Payment Information ID"""
   paymentInformationId: String
-
   """Payment method"""
   paymentMethod: String
-
   """Timebox start for payment creation"""
   from: DateTime
-
   """Timebox end for payment creation"""
   to: DateTime
 }
@@ -146,16 +142,12 @@ input PaymentFilter {
 enum PaymentStatus {
   """The payment was created but not yet processed"""
   OPEN
-
   """The payment is currently being processed"""
   PENDING
-
   """The payment was successfully processed and the amount was transfered"""
   SUCCEEDED
-
   """The payment processing failed indefinetely"""
   FAILED
-
   """The payment was sold to external inkasso service"""
   INKASSO
 }
@@ -166,48 +158,37 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 """A payment of an invoice or return"""
-type Payment
-  @key(fields: "id")
-{
+type Payment @key(key: "id") {
   """The uuid identifier of the payment"""
   id: UUID!
-
   """Payment Amount in the smallest currency unit (e.g. cents)"""
   totalAmount: Float!
-
   """Status of the payment"""
   status: PaymentStatus!
-
   """Used Payment Information"""
   paymentInformation: PaymentInformation!
-
   """Date of the payment"""
   payedAt: DateTime
-
   """Number of retries for the payment process"""
   numberOfRetries: Float!
 }
 
 """A connection of payments"""
-type PaymentConnection {
+type PaymentConnection @shareable {
   """The resulting items"""
   nodes: [Payment!]
-
   """The total amount of items in this connection"""
   totalCount: Int!
-
   """Whether this connection has a next page"""
   hasNextPage: Boolean!
 }
 
 """A connection of payment informations"""
-type PaymentInformationConnection {
+type PaymentInformationConnection @shareable {
   """The resulting items"""
   nodes: [PaymentInformation!]
-
   """The total amount of items in this connection"""
   totalCount: Int!
-
   """Whether this connection has a next page"""
   hasNextPage: Boolean!
 }
@@ -217,43 +198,35 @@ type Query {
   paymentInformations(
     """Number of items to skip"""
     skip: Int = 0
-
     """Number of items to return"""
     first: Int = 2147483647
-
     """Ordering"""
     orderBy: PaymentInformationOrder
-
     """Filtering"""
     filter: PaymentInformationFilter
   ): PaymentInformationConnection!
-
   """Retrieves all payments"""
   payments(
     """Number of items to skip"""
     skip: Int = 0
-
     """Number of items to return"""
     first: Int = 2147483647
-
     """Ordering"""
     orderBy: PaymentOrder
-
     """Filtering"""
     filter: PaymentFilter
   ): PaymentConnection!
+  _entities(representations: [_Any!]!): [_Entity]!
 }
 
 type Mutation {
   """Adds a credit card to the users stored payment informations"""
   createCreditCardPaymentInformation(input: CreateCreditCardInformationInput!): PaymentInformation!
-
   """Deletes a payment information by id"""
   deletePaymentInformation(
     """UUID of payment information to delete"""
     id: UUID!
   ): PaymentInformation!
-
   """Deletes a payment by id"""
   deletePayment(
     """UUID of payment to delete"""
@@ -265,10 +238,14 @@ type Mutation {
 input CreateCreditCardInformationInput {
   """The card holders name"""
   cardHolder: String!
-
   """The credit cards number"""
   cardNumber: String!
-
   """The credit cards expiration date"""
   expirationDate: String!
 }
+
+scalar _Any
+
+scalar FieldSet
+
+union _Entity = User | PaymentInformation | Payment
