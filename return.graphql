@@ -1,187 +1,185 @@
-schema @link(import : ["@key", "@shareable", "FieldSet"], url : "https://specs.apollo.dev/federation/v2.5"){
+schema @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@shareable", "@key", "@inaccessible", "FieldSet"]) {
   query: Query
   mutation: Mutation
 }
 
-"Marks the field, argument, input field or enum value as deprecated"
-directive @deprecated(
-    "The reason for the deprecation"
-    reason: String = "No longer supported"
-  ) on FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM_VALUE | INPUT_FIELD_DEFINITION
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-"Indicates an Input Object is a OneOf Input Object."
-directive @oneOf on INPUT_OBJECT
+directive @key(fields: FieldSet!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
 
-"Exposes a URL that specifies the behaviour of this scalar."
-directive @specifiedBy(
-    "The URL that specifies the behaviour of this scalar."
-    url: String!
-  ) on SCALAR
+directive @shareable repeatable on OBJECT | FIELD_DEFINITION
 
-"An object with an ID."
+enum link__Purpose {
+  """
+  `SECURITY` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  `EXECUTION` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+scalar link__Import
+
+"""An object with an ID."""
 interface Node {
-  "The ID of the node."
+  """The ID of the node."""
   id: UUID!
 }
 
-union _Entity = Order | OrderItem | Return | User
-
 type Mutation {
-  "Create a new return"
+  """Create a new return"""
   createReturn(
-    "Input for the createReturn mutation"
+    """Input for the createReturn mutation"""
     input: CreateReturnInput!
   ): Return!
 }
 
-"An order."
-type Order implements Node @key(fields : "id", resolvable : true) {
-  "The ID of the node."
+"""An order."""
+type Order implements Node @key(fields: "id", resolvable: true) {
+  """The ID of the node."""
   id: UUID!
 }
 
-"An order item."
-type OrderItem implements Node @key(fields : "id", resolvable : true) {
-  "The ID of the node."
+"""An order item."""
+type OrderItem implements Node @key(fields: "id", resolvable: true) {
+  """The ID of the node."""
   id: UUID!
-  "The return this order item was returned with."
+  """The return this order item was returned with."""
   returnedWith: Return
 }
 
-"A connection to a list of `OrderItem` values."
+"""A connection to a list of `OrderItem` values."""
 type OrderItemConnection @shareable {
-  "Whether this connection has a next page"
+  """Whether this connection has a next page"""
   hasNextPage: Boolean!
-  "The resulting items."
+  """The resulting items."""
   nodes: [OrderItem!]!
-  "The total amount of items in this connection"
+  """The total amount of items in this connection"""
   totalCount: Int!
 }
 
 type Query {
-  "Union of all types that use the @key directive, including both types native to the schema and extended types"
-  _entities(representations: [_Any!]!): [_Entity]!
-  _service: _Service!
-  "Get a return by id"
+  """Get a return by id"""
   return(
-    "The id of the return"
+    """The id of the return"""
     id: UUID!
   ): Return!
-  "Get all returns"
+  """Get all returns"""
   returns(
-    "Number of items to return"
-    first: Int,
-    "Ordering"
-    orderBy: ReturnOrderInput,
-    "Number of items to skip"
+    """Number of items to return"""
+    first: Int
+    """Ordering"""
+    orderBy: ReturnOrderInput
+    """Number of items to skip"""
     skip: Int
   ): ReturnConnection!
+  _entities(representations: [_Any!]!): [_Entity]!
 }
 
-"A return."
-type Return implements Node @key(fields : "id", resolvable : true) {
-  "The time the return was created."
+"""A return."""
+type Return implements Node @key(fields: "id", resolvable: true) {
+  """The time the return was created."""
   createdAt: DateTime!
-  "The ID of the node."
+  """The ID of the node."""
   id: UUID!
-  "The order this return is for."
+  """The order this return is for."""
   order: Order!
-  "The reason for the return."
+  """The reason for the return."""
   reason: String!
-  "The amount of money refunded."
+  """The amount of money refunded."""
   refundedAmount: Int!
-  "Get all order items returned with this return"
+  """Get all order items returned with this return"""
   returnedItems(
-    "Number of items to return"
-    first: Int,
-    "Ordering"
-    orderBy: CommonOrderInput,
-    "Number of items to skip"
+    """Number of items to return"""
+    first: Int
+    """Ordering"""
+    orderBy: CommonOrderInput
+    """Number of items to skip"""
     skip: Int
   ): OrderItemConnection!
 }
 
-"A connection to a list of `Return` values."
+"""A connection to a list of `Return` values."""
 type ReturnConnection @shareable {
-  "Whether this connection has a next page"
+  """Whether this connection has a next page"""
   hasNextPage: Boolean!
-  "The resulting items."
+  """The resulting items."""
   nodes: [Return!]!
-  "The total amount of items in this connection"
+  """The total amount of items in this connection"""
   totalCount: Int!
 }
 
-"A user."
-type User implements Node @key(fields : "id", resolvable : true) {
-  "The ID of the node."
+"""A user."""
+type User implements Node @key(fields: "id", resolvable: true) {
+  """The ID of the node."""
   id: UUID!
-  "Get all returns of this user"
+  """Get all returns of this user"""
   returns(
-    "Number of items to return"
-    first: Int,
-    "Ordering"
-    orderBy: ReturnOrderInput,
-    "Number of items to skip"
+    """Number of items to return"""
+    first: Int
+    """Ordering"""
+    orderBy: ReturnOrderInput
+    """Number of items to skip"""
     skip: Int
   ): ReturnConnection!
 }
 
-type _Service {
-  sdl: String!
-}
-
-"Common order fields"
+"""Common order fields"""
 enum CommonOrderField {
-  "Order entities by their id"
+  """Order entities by their id"""
   ID
 }
 
-"Order direction"
+"""Order direction"""
 enum OrderDirection {
-  "Ascending order"
+  """Ascending order"""
   ASC
-  "Descending order"
+  """Descending order"""
   DESC
 }
 
-"Return order fields"
+"""Return order fields"""
 enum ReturnOrderField {
-  "Order returns by their id"
+  """Order returns by their id"""
   ID
 }
 
-"A slightly refined version of RFC-3339 compliant DateTime Scalar"
+"""A slightly refined version of RFC-3339 compliant DateTime Scalar"""
 scalar DateTime
 
-"Federation type representing set of fields"
-scalar FieldSet
-
-"A universally unique identifier compliant UUID Scalar"
+"""A universally unique identifier compliant UUID Scalar"""
 scalar UUID
 
-"Federation scalar type used to represent any external entities passed to _entities query."
-scalar _Any
-
-"Discount order"
+"""Discount order"""
 input CommonOrderInput {
-  "The direction to order by"
+  """The direction to order by"""
   direction: OrderDirection
-  "The field to order by"
+  """The field to order by"""
   field: CommonOrderField
 }
 
-"Input for the createReturn mutation"
+"""Input for the createReturn mutation"""
 input CreateReturnInput {
-  "The order items to return, must belong to the same order and must not be already returned."
+  """
+  The order items to return, must belong to the same order and must not be already returned.
+  """
   orderItemIds: [UUID!]!
-  "The reason for the return."
+  """The reason for the return."""
   reason: String!
 }
 
-"Direction to sort returns in"
+"""Direction to sort returns in"""
 input ReturnOrderInput {
-  "The direction to order by"
+  """The direction to order by"""
   direction: OrderDirection
-  "The field to order by"
+  """The field to order by"""
   field: ReturnOrderField
 }
+
+scalar _Any
+
+scalar FieldSet
+
+union _Entity = Order | OrderItem | Return | User
