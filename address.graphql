@@ -1,228 +1,224 @@
-schema @link(import : ["@key", "@shareable", "FieldSet"], url : "https://specs.apollo.dev/federation/v2.5"){
+schema @link(url: "https://specs.apollo.dev/federation/v2.5", import: ["@shareable", "@key", "@inaccessible", "FieldSet"]) {
   query: Query
   mutation: Mutation
 }
 
-"Marks the field, argument, input field or enum value as deprecated"
-directive @deprecated(
-    "The reason for the deprecation"
-    reason: String = "No longer supported"
-  ) on FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM_VALUE | INPUT_FIELD_DEFINITION
+directive @link(url: String, as: String, for: link__Purpose, import: [link__Import]) repeatable on SCHEMA
 
-"Indicates an Input Object is a OneOf Input Object."
-directive @oneOf on INPUT_OBJECT
+directive @key(fields: FieldSet!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
 
-"Exposes a URL that specifies the behaviour of this scalar."
-directive @specifiedBy(
-    "The URL that specifies the behaviour of this scalar."
-    url: String!
-  ) on SCALAR
+directive @shareable repeatable on OBJECT | FIELD_DEFINITION
 
-"An address."
+enum link__Purpose {
+  """
+  `SECURITY` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+  """
+  `EXECUTION` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+scalar link__Import
+
+"""An address."""
 interface Address implements Node {
-  "The city part of the address"
+  """The city part of the address"""
   city: String!
-  "The company name part of the address"
+  """The company name part of the address"""
   companyName: String
-  "The country part of the address"
+  """The country part of the address"""
   country: String!
-  "The ID of the node."
+  """The ID of the node."""
   id: UUID!
-  "The postal code part of the address"
+  """The postal code part of the address"""
   postalCode: String!
-  "The first part of the street part of the address"
+  """The first part of the street part of the address"""
   street1: String!
-  "The second part of the street part of the address"
+  """The second part of the street part of the address"""
   street2: String!
 }
 
-"An object with an ID."
+"""An object with an ID."""
 interface Node {
-  "The ID of the node."
+  """The ID of the node."""
   id: UUID!
 }
 
-union _Entity = User | UserAddress | VendorAddress
-
 type Mutation {
-  "Archive a user address"
+  """Archive a user address"""
   archiveUserAddress(
-    "Input for the archiveUserAddress mutation"
+    """Input for the archiveUserAddress mutation"""
     input: ArchiveUserAddressInput!
   ): UserAddress!
-  "Create a new user address"
+  """Create a new user address"""
   createUserAddress(
-    "Input for the createUserAddress mutation"
+    """Input for the createUserAddress mutation"""
     input: CreateUserAddressInput!
   ): UserAddress!
-  "Create a new vendor address"
+  """Create a new vendor address"""
   createVendorAddress(
-    "Input for the createVendorAddress mutation"
+    """Input for the createVendorAddress mutation"""
     input: CreateVendorAddressInput!
   ): VendorAddress!
 }
 
 type Query {
-  "Union of all types that use the @key directive, including both types native to the schema and extended types"
-  _entities(representations: [_Any!]!): [_Entity]!
-  _service: _Service!
-  "Get a address by id"
+  """Get a address by id"""
   address(
-    "The id of the address"
+    """The id of the address"""
     id: UUID!
   ): Address!
-  "Get the current vendor address"
+  """Get the current vendor address"""
   vendorAddress: VendorAddress
+  _entities(representations: [_Any!]!): [_Entity]!
 }
 
-"A user."
-type User implements Node @key(fields : "id", resolvable : true) {
-  "Get all address the user received"
+"""A user."""
+type User implements Node @key(fields: "id", resolvable: true) {
+  """Get all address the user received"""
   addresses(
-    "Filtering"
-    filter: UserAddressFilterInput,
-    "Number of items to return"
-    first: Int,
-    "Ordering"
-    orderBy: UserAddressOrderInput,
-    "Number of items to skip"
+    """Filtering"""
+    filter: UserAddressFilterInput
+    """Number of items to return"""
+    first: Int
+    """Ordering"""
+    orderBy: UserAddressOrderInput
+    """Number of items to skip"""
     skip: Int
   ): UserAddressConnection!
-  "The ID of the node."
+  """The ID of the node."""
   id: UUID!
 }
 
-"A address associated with a user."
-type UserAddress implements Address & Node @key(fields : "id", resolvable : true) {
-  "If this address is archived, the datetime it was archived."
+"""A address associated with a user."""
+type UserAddress implements Address & Node @key(fields: "id", resolvable: true) {
+  """If this address is archived, the datetime it was archived."""
   archivedAt: DateTime
-  "The city part of the address"
+  """The city part of the address"""
   city: String!
-  "The company name part of the address"
+  """The company name part of the address"""
   companyName: String
-  "The country part of the address"
+  """The country part of the address"""
   country: String!
-  "The ID of the node."
+  """The ID of the node."""
   id: UUID!
-  "If true, this address is archived and can no longer be used."
+  """If true, this address is archived and can no longer be used."""
   isArchived: Boolean!
-  "The postal code part of the address"
+  """The postal code part of the address"""
   postalCode: String!
-  "The first part of the street part of the address"
+  """The first part of the street part of the address"""
   street1: String!
-  "The second part of the street part of the address"
+  """The second part of the street part of the address"""
   street2: String!
-  "The user this address belongs to."
+  """The user this address belongs to."""
   user: User!
 }
 
-"A connection to a list of `Address` values."
+"""A connection to a list of `Address` values."""
 type UserAddressConnection @shareable {
-  "Whether this connection has a next page"
+  """Whether this connection has a next page"""
   hasNextPage: Boolean!
-  "The resulting items."
+  """The resulting items."""
   nodes: [UserAddress!]!
-  "The total amount of items in this connection"
+  """The total amount of items in this connection"""
   totalCount: Int!
 }
 
-"An address associated with the vendor."
-type VendorAddress implements Address & Node @key(fields : "id", resolvable : true) {
-  "The city part of the address"
+"""An address associated with the vendor."""
+type VendorAddress implements Address & Node @key(fields: "id", resolvable: true) {
+  """The city part of the address"""
   city: String!
-  "The company name part of the address"
+  """The company name part of the address"""
   companyName: String
-  "The country part of the address"
+  """The country part of the address"""
   country: String!
-  "The ID of the node."
+  """The ID of the node."""
   id: UUID!
-  "The postal code part of the address"
+  """The postal code part of the address"""
   postalCode: String!
-  "The first part of the street part of the address"
+  """The first part of the street part of the address"""
   street1: String!
-  "The second part of the street part of the address"
+  """The second part of the street part of the address"""
   street2: String!
 }
 
-type _Service {
-  sdl: String!
-}
-
-"Order direction"
+"""Order direction"""
 enum OrderDirection {
-  "Ascending order"
+  """Ascending order"""
   ASC
-  "Descending order"
+  """Descending order"""
   DESC
 }
 
-"User address order fields"
+"""User address order fields"""
 enum UserAddressOrderField {
-  "Order addresss by their id"
+  """Order addresss by their id"""
   ID
 }
 
-"A slightly refined version of RFC-3339 compliant DateTime Scalar"
+"""A slightly refined version of RFC-3339 compliant DateTime Scalar"""
 scalar DateTime
 
-"Federation type representing set of fields"
-scalar FieldSet
-
-"A universally unique identifier compliant UUID Scalar"
+"""A universally unique identifier compliant UUID Scalar"""
 scalar UUID
 
-"Federation scalar type used to represent any external entities passed to _entities query."
-scalar _Any
-
-"Input for the archiveUserAddress mutation."
+"""Input for the archiveUserAddress mutation."""
 input ArchiveUserAddressInput {
-  "The id of the user address to archive."
+  """The id of the user address to archive."""
   id: UUID!
 }
 
-"Input for the createUserAddress mutation."
+"""Input for the createUserAddress mutation."""
 input CreateUserAddressInput {
-  "The city part of the address to create"
+  """The city part of the address to create"""
   city: String!
-  "The company name part of the address to create"
+  """The company name part of the address to create"""
   companyName: String
-  "The country part of the address to create"
+  """The country part of the address to create"""
   country: String!
-  "The postal code part of the address to create"
+  """The postal code part of the address to create"""
   postalCode: String!
-  "The first part of the street part of the address to create"
+  """The first part of the street part of the address to create"""
   street1: String!
-  "The second part of the street part of the address to create"
+  """The second part of the street part of the address to create"""
   street2: String!
-  "The id of the user to create the address for."
+  """The id of the user to create the address for."""
   userId: UUID!
 }
 
-"Input for the createVendorAddress mutation."
+"""Input for the createVendorAddress mutation."""
 input CreateVendorAddressInput {
-  "The city part of the address to create"
+  """The city part of the address to create"""
   city: String!
-  "The company name part of the address to create"
+  """The company name part of the address to create"""
   companyName: String
-  "The country part of the address to create"
+  """The country part of the address to create"""
   country: String!
-  "The postal code part of the address to create"
+  """The postal code part of the address to create"""
   postalCode: String!
-  "The first part of the street part of the address to create"
+  """The first part of the street part of the address to create"""
   street1: String!
-  "The second part of the street part of the address to create"
+  """The second part of the street part of the address to create"""
   street2: String!
 }
 
-"User address filter"
+"""User address filter"""
 input UserAddressFilterInput {
   isArchived: Boolean
 }
 
-"User address order"
+"""User address order"""
 input UserAddressOrderInput {
-  "The direction to order by"
+  """The direction to order by"""
   direction: OrderDirection
-  "The field to order by"
+  """The field to order by"""
   field: UserAddressOrderField
 }
+
+scalar _Any
+
+scalar FieldSet
+
+union _Entity = User | UserAddress | VendorAddress
