@@ -65,8 +65,24 @@ enum OrderDirection {
   DESC
 }
 
+type Product @key(fields: "id") {
+  """UUID of the product."""
+  id: UUID!
+  """Retrieves reviews of product."""
+  reviews(
+    """Describes that the `first` N reviews should be retrieved."""
+    first: Int
+    """Describes how many reviews should be skipped at the beginning."""
+    skip: Int
+    """Specifies the order in which reviews are retrieved."""
+    orderBy: ReviewOrderInput
+  ): ReviewConnection!
+  """Retrieves average rating of product."""
+  averageRating: Float!
+}
+
 type ProductVariant @key(fields: "id") {
-  """UUID of the product variant."""
+  """Product variant UUID."""
   id: UUID!
   """Retrieves reviews of product variant."""
   reviews(
@@ -77,11 +93,7 @@ type ProductVariant @key(fields: "id") {
     """Specifies the order in which reviews are retrieved."""
     orderBy: ReviewOrderInput
   ): ReviewConnection!
-  """
-  Retrieves average rating of product variant.
-  
-  Filters reviews with `is_visible == false` to exclude them from the average rating.
-  """
+  """Retrieves average rating of product variant."""
   averageRating: Float!
 }
 
@@ -195,4 +207,4 @@ scalar _Any
 
 scalar FieldSet
 
-union _Entity = ProductVariant | User
+union _Entity = Product | ProductVariant | User
