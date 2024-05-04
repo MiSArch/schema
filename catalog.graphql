@@ -147,6 +147,22 @@ type CategoryConnection @shareable {
   totalCount: Int!
 }
 
+"""A Media file."""
+type Media implements Node @key(fields: "id", resolvable: false) {
+  """The ID of the node."""
+  id: UUID!
+}
+
+"""A connection to a list of `Media` values."""
+type MediaConnection @shareable {
+  """Whether this connection has a next page"""
+  hasNextPage: Boolean!
+  """The resulting items."""
+  nodes: [Media!]!
+  """The total amount of items in this connection"""
+  totalCount: Int!
+}
+
 type Mutation {
   """
   Create a new value for a characteristic whose values have no further meaning
@@ -308,6 +324,15 @@ type ProductVariantVersion implements Node @key(fields: "id", resolvable: true) 
   description: String!
   """The ID of the node."""
   id: UUID!
+  """Get all associated Medias"""
+  medias(
+    """Number of items to return"""
+    first: Int
+    """Ordering"""
+    orderBy: CommonOrderInput
+    """Number of items to skip"""
+    skip: Int
+  ): MediaConnection!
   """The name of the ProductVariantVersion."""
   name: String!
   """The ProductVariant this is a version of."""
@@ -403,6 +428,12 @@ enum CategoryOrderField {
   NAME
 }
 
+"""Common order fields"""
+enum CommonOrderField {
+  """Order entities by their id"""
+  ID
+}
+
 """Order direction"""
 enum OrderDirection {
   """Ascending order"""
@@ -489,6 +520,14 @@ input CategoryOrderInput {
   field: CategoryOrderField
 }
 
+"""Discount order"""
+input CommonOrderInput {
+  """The direction to order by"""
+  direction: OrderDirection
+  """The field to order by"""
+  field: CommonOrderField
+}
+
 """Input for the createCategoricalCategoryCharacteristic mutation"""
 input CreateCategoricalCategoryCharacteristicInput {
   """The Category that the CategoricalCategoryCharacteristicI belongs to"""
@@ -557,6 +596,8 @@ input CreateProductVariantVersionInput {
   categoricalCharacteristicValues: [CategoricalCategoryCharacteristicValueInput!]!
   """The description of the ProductVariant."""
   description: String!
+  """The associated Media files."""
+  mediaIds: [UUID!]!
   """The name of the ProductVariant."""
   name: String!
   """
@@ -639,6 +680,8 @@ input ProductVariantVersionInput {
   categoricalCharacteristicValues: [CategoricalCategoryCharacteristicValueInput!]!
   """The description of the ProductVariant."""
   description: String!
+  """The associated Media files."""
+  mediaIds: [UUID!]!
   """The name of the ProductVariant."""
   name: String!
   """
@@ -685,4 +728,4 @@ scalar _Any
 
 scalar FieldSet
 
-union _Entity = CategoricalCategoryCharacteristic | Category | NumericalCategoryCharacteristic | Product | ProductVariant | ProductVariantVersion | TaxRate
+union _Entity = CategoricalCategoryCharacteristic | Category | Media | NumericalCategoryCharacteristic | Product | ProductVariant | ProductVariantVersion | TaxRate
