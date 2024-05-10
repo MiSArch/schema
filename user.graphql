@@ -35,6 +35,14 @@ type Mutation {
   ): User!
 }
 
+"""A name consisting of a firstName and lastName."""
+type Name @shareable {
+  """The first name of the user"""
+  firstName: String!
+  """The last name of the user"""
+  lastName: String!
+}
+
 type Query {
   """Get the currently authenticated user"""
   currentUser: User
@@ -61,14 +69,12 @@ type User implements Node @key(fields: "id", resolvable: true) {
   birthday: Date
   """The date when the user joined"""
   dateJoined: DateTime!
-  """The first name of the user"""
-  firstName: String!
   """The gender of the user"""
   gender: Gender
   """The ID of the node."""
   id: UUID!
-  """The last name of the user"""
-  lastName: String!
+  """The name of the user"""
+  name: Name!
   """The username of the user"""
   username: String!
 }
