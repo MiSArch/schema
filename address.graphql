@@ -32,6 +32,8 @@ interface Address implements Node {
   country: String!
   """The ID of the node."""
   id: UUID!
+  """The name of the address"""
+  name: Name
   """The postal code part of the address"""
   postalCode: String!
   """The first part of the street part of the address"""
@@ -62,6 +64,14 @@ type Mutation {
     """Input for the createVendorAddress mutation"""
     input: CreateVendorAddressInput!
   ): VendorAddress!
+}
+
+"""A name consisting of a firstName and lastName."""
+type Name @shareable {
+  """The first name of the user"""
+  firstName: String!
+  """The last name of the user"""
+  lastName: String!
 }
 
 type Query {
@@ -106,6 +116,8 @@ type UserAddress implements Address & Node @key(fields: "id", resolvable: true) 
   id: UUID!
   """If true, this address is archived and can no longer be used."""
   isArchived: Boolean!
+  """The name of the address"""
+  name: Name
   """The postal code part of the address"""
   postalCode: String!
   """The first part of the street part of the address"""
@@ -136,6 +148,8 @@ type VendorAddress implements Address & Node @key(fields: "id", resolvable: true
   country: String!
   """The ID of the node."""
   id: UUID!
+  """The name of the address"""
+  name: Name
   """The postal code part of the address"""
   postalCode: String!
   """The first part of the street part of the address"""
@@ -178,6 +192,8 @@ input CreateUserAddressInput {
   companyName: String
   """The country part of the address to create"""
   country: String!
+  """The name of the address to create"""
+  name: NameInput
   """The postal code part of the address to create"""
   postalCode: String!
   """The first part of the street part of the address to create"""
@@ -196,12 +212,22 @@ input CreateVendorAddressInput {
   companyName: String
   """The country part of the address to create"""
   country: String!
+  """The name of the address to create"""
+  name: NameInput
   """The postal code part of the address to create"""
   postalCode: String!
   """The first part of the street part of the address to create"""
   street1: String!
   """The second part of the street part of the address to create"""
   street2: String!
+}
+
+"""A name consisting of a firstName and lastName."""
+input NameInput {
+  """The first name of the user"""
+  firstName: String!
+  """The last name of the user"""
+  lastName: String!
 }
 
 """User address filter"""
