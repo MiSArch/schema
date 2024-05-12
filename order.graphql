@@ -51,6 +51,8 @@ input CreateOrderInput {
   invoiceAddressId: UUID!
   """UUID of payment information that the order should be processed with."""
   paymentInformationId: UUID!
+  """VAT number."""
+  vatNumber: String!
 }
 
 scalar DateTime
@@ -79,10 +81,12 @@ type Mutation {
   ): Order!
   """
   Places an existing order by changing its status to `OrderStatus::Placed`.
+  
+  Adds optional payment authorization input to order DTO when placing order.
   """
   placeOrder(
-    """Uuid of order to place"""
-    id: UUID!
+    """PlaceOrderInput"""
+    input: PlaceOrderInput!
   ): Order!
 }
 
@@ -225,6 +229,18 @@ enum OrderStatus {
   Something went wrong with the order and it was compensated in all relevant serivces.
   """
   REJECTED
+}
+
+input PaymentAuthorizationInput {
+  """CVC/CVV number of 3-4 digits."""
+  cvc: Int
+}
+
+input PlaceOrderInput {
+  """UUID of order to place."""
+  id: UUID!
+  """Optional payment authorization data."""
+  paymentAuthorization: PaymentAuthorizationInput
 }
 
 """Foreign type of a product variant."""
