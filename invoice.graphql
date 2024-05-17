@@ -31,6 +31,7 @@ type Invoice @key(fields: "id") {
   content: String!
   userAddress: UserAddress!
   vendorAddress: VendorAddress!
+  vatNumber: String
 }
 
 """Foreign type of an order."""
@@ -42,7 +43,7 @@ type Order @key(fields: "id") {
 }
 
 type Query {
-  """Query for invoice of specific id."""
+  """Query for invoice of specific UUID."""
   invoice(
     """UUID of invoice to retrieve."""
     id: UUID!
