@@ -30,7 +30,7 @@ type Media @key(fields: "id") {
   path: String!
 }
 
-"""A connection of Medias."""
+"""A connection of medias."""
 type MediaConnection @shareable {
   """The resulting entities."""
   nodes: [Media!]!
