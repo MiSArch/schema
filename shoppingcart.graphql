@@ -22,11 +22,7 @@ enum link__Purpose {
 
 scalar link__Import
 
-"""
-Describes the fields that a foreign types can be ordered by.
-
-Only the Id valid at the moment.
-"""
+"""Describes the fields that a foreign types can be ordered by."""
 enum CommonOrderField {
   """Orders by "id"."""
   ID
@@ -43,7 +39,7 @@ input CommonOrderInput {
 input CreateShoppingCartItemInput {
   """UUID of user owning the shopping cart."""
   id: UUID!
-  """ShoppingCartItem in shoppingcart to update"""
+  """shopping cart item in shopping cart to update"""
   shoppingCartItem: ShoppingCartItemInput!
 }
 
@@ -51,16 +47,16 @@ scalar DateTime
 
 type Mutation {
   """
-  Updates shoppingcart_items of a specific shoppingcart referenced with an id.
+  Updates shopping cart items of a specific shopping cart referenced with a UUID.
   
-  Formats UUIDs as hyphenated lowercase Strings.
+  Formats UUIDs as hyphenated lowercase strings.
   """
   updateShoppingcart(
     """UpdateShoppingCartInput"""
     input: UpdateShoppingCartInput!
   ): ShoppingCart!
   """
-  Adds shoppingcart item to a shopping cart.
+  Adds shopping cart item to a shopping cart.
   
   Queries for existing item, otherwise adds new shoppingcart item.
   """
@@ -68,17 +64,12 @@ type Mutation {
     """CreateShoppingCartItemInput"""
     input: CreateShoppingCartItemInput!
   ): ShoppingCartItem!
-  """
-  Updates a single shoppingcart item.
-  
-  * `collection` - MongoDB collection to update.
-  * `input` - `UpdateShoppingCartItemInput`.
-  """
+  """Updates a single shopping cart item."""
   updateShoppingcartItem(
     """UpdateShoppingCartItemInput"""
     input: UpdateShoppingCartItemInput!
   ): ShoppingCartItem!
-  """Deletes shoppingcart item of id."""
+  """Deletes shoppingcart item of UUID."""
   deleteShoppingcartItem(
     """UUID of shoppingcart item to delete."""
     id: UUID!
@@ -100,7 +91,7 @@ type ProductVariant @key(fields: "id", resolvable: false) {
 }
 
 type Query {
-  """Retrieves shoppingcart item of specific id."""
+  """Retrieves shopping cart item of specific UUID."""
   shoppingcartItem(
     """UUID of shoppingcart to retrieve."""
     id: UUID!
@@ -108,11 +99,11 @@ type Query {
   _entities(representations: [_Any!]!): [_Entity]!
 }
 
-"""The ShoppingCart of a user."""
+"""The shopping cart of a user."""
 type ShoppingCart @shareable {
-  """Timestamp when ShoppingCart was last updated."""
+  """Timestamp when shopping cart was last updated."""
   lastUpdatedAt: DateTime!
-  """Retrieves product variants."""
+  """Retrieves shoppingcart items in shopping cart."""
   shoppingcartItems(
     """Describes that the `first` N shoppingcarts should be retrieved."""
     first: Int
@@ -123,19 +114,19 @@ type ShoppingCart @shareable {
   ): ShoppingCartItemConnection!
 }
 
-"""The ShoppingCart of a user."""
+"""Shopping cart item in a shopping cart of a user."""
 type ShoppingCartItem @key(fields: "id") {
-  """ShoppingCartItem UUID."""
+  """Shopping cart item UUID."""
   id: UUID!
   """Count of items in basket."""
   count: Int!
-  """Timestamp when ShoppingCartItem was added."""
+  """Timestamp when shopping cart item was added."""
   addedAt: DateTime!
   """Product variant of shopping cart item."""
   productVariant: ProductVariant!
 }
 
-"""A connection of ShoppingCart Items."""
+"""A connection of shopping cart items."""
 type ShoppingCartItemConnection @shareable {
   """The resulting entities."""
   nodes: [ShoppingCartItem!]!
@@ -146,9 +137,9 @@ type ShoppingCartItemConnection @shareable {
 }
 
 input ShoppingCartItemInput {
-  """Count of items in basket."""
+  """Count of shopping cart items in cart."""
   count: Int!
-  """Uuid of product variant."""
+  """UUID of product variant."""
   productVariantId: UUID!
 }
 
@@ -157,14 +148,14 @@ scalar UUID
 input UpdateShoppingCartInput {
   """UUID of user owning shopping cart."""
   id: UUID!
-  """ShoppingCartItems of shoppingcart to update"""
+  """Shopping cart items of shopping cart to update."""
   shoppingCartItems: [ShoppingCartItemInput!]
 }
 
 input UpdateShoppingCartItemInput {
   """UUID of shoppingcart item to update."""
   id: UUID!
-  """Count of items in basket."""
+  """Count of shopping cart items in cart."""
   count: Int!
 }
 
@@ -172,6 +163,7 @@ input UpdateShoppingCartItemInput {
 type User @key(fields: "id") {
   """UUID of the user."""
   id: UUID!
+  """Shopping cart of the user."""
   shoppingcart: ShoppingCart!
 }
 
