@@ -27,9 +27,9 @@ input CreateReviewInput {
   userId: UUID!
   """UUID of product variant in review."""
   productVariantId: UUID!
-  """Body of Review."""
+  """Body of review."""
   body: String!
-  """Rating of Review in 1-5 stars."""
+  """Rating of review in 1-5 stars."""
   rating: Rating!
   """Flag if review is visible, by default set to true."""
   isVisible: Boolean
@@ -45,12 +45,12 @@ type Mutation {
     """CreateReviewInput"""
     input: CreateReviewInput!
   ): Review!
-  """Updates a specific review referenced with an id."""
+  """Updates a specific review referenced with an UUID."""
   updateReview(
     """UpdateReviewInput"""
     input: UpdateReviewInput!
   ): Review!
-  """Deletes review of id."""
+  """Deletes review of UUID."""
   deleteReview(
     """UUID of review to delete."""
     id: UUID!
@@ -107,7 +107,7 @@ type Query {
     """Specifies the order in which reviews are retrieved."""
     orderBy: ReviewOrderInput
   ): ReviewConnection!
-  """Retrieves review of specific id."""
+  """Retrieves review of specific UUID."""
   review(
     """UUID of review to retrieve."""
     id: UUID!
@@ -123,27 +123,27 @@ enum Rating {
   FIVE_STARS
 }
 
-"""The Review of a user."""
+"""The review of a user."""
 type Review @shareable {
-  """Review UUID."""
+  """review UUID."""
   id: UUID!
   """User."""
   user: User!
   """Product variant that review is about."""
   productVariant: ProductVariant!
-  """Body of Review."""
+  """Body of review."""
   body: String!
-  """Rating of Review in 1-5 stars."""
+  """Rating of review in 1-5 stars."""
   rating: Rating!
-  """Timestamp when Review was created."""
+  """Timestamp when review was created."""
   createdAt: DateTime!
-  """Timestamp when Review was created."""
+  """Timestamp when review was created."""
   lastUpdatedAt: DateTime!
   """Flag if review is visible,"""
   isVisible: Boolean!
 }
 
-"""A connection of Reviews."""
+"""A connection of reviews."""
 type ReviewConnection @shareable {
   """The resulting entities."""
   nodes: [Review!]!
@@ -180,9 +180,9 @@ scalar UUID
 input UpdateReviewInput {
   """UUID of review to update."""
   id: UUID!
-  """Body of Review to update."""
+  """Body of review to update."""
   body: String
-  """Rating of Review in 1-5 stars to update."""
+  """Rating of review in 1-5 stars to update."""
   rating: Rating
   """Flag if review is visible."""
   isVisible: Boolean
