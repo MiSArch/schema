@@ -22,11 +22,7 @@ enum link__Purpose {
 
 scalar link__Import
 
-"""
-Describes the fields that a foreign types can be ordered by.
-
-Only the Id valid at the moment.
-"""
+"""Describes the fields that a foreign types can be ordered by."""
 enum CommonOrderField {
   """Orders by "id"."""
   ID
@@ -55,22 +51,22 @@ type Mutation {
   """
   Adds a wishlist with a user_id, a list of product_variant_ids and a name.
   
-  Formats UUIDs as hyphenated lowercase Strings.
+  Formats UUIDs as hyphenated lowercase strings.
   """
   createWishlist(
     """CreateWishlistInput"""
     input: CreateWishlistInput!
   ): Wishlist!
   """
-  Updates name and/or product_variant_ids of a specific wishlist referenced with an id.
+  Updates name and/or product_variant_ids of a specific wishlist referenced with an UUID.
   
-  Formats UUIDs as hyphenated lowercase Strings.
+  Formats UUIDs as hyphenated lowercase strings.
   """
   updateWishlist(
     """UpdateWishlistInput"""
     input: UpdateWishlistInput!
   ): Wishlist!
-  """Deletes wishlist of id."""
+  """Deletes wishlist of UUID."""
   deleteWishlist(
     """UUID of wishlist to delete."""
     id: UUID!
@@ -91,7 +87,7 @@ type ProductVariant @key(fields: "id", resolvable: false) {
   id: UUID!
 }
 
-"""A connection of ProductVariants."""
+"""A connection of product variants."""
 type ProductVariantConnection @shareable {
   """The resulting entities."""
   nodes: [ProductVariant!]!
@@ -102,7 +98,7 @@ type ProductVariantConnection @shareable {
 }
 
 type Query {
-  """Retrieves wishlist of specific id."""
+  """Retrieves wishlist of specific UUID."""
   wishlist(
     """UUID of wishlist to retrieve."""
     id: UUID!
@@ -136,17 +132,17 @@ type User @key(fields: "id") {
   ): WishlistConnection!
 }
 
-"""The Wishlist of a user."""
+"""The wishlist of a user."""
 type Wishlist @key(fields: "id") {
   """Wishlist UUID."""
   id: UUID!
   """User."""
   user: User!
-  """Name of Wishlist."""
+  """Name of wishlist."""
   name: String!
-  """Timestamp when Wishlist was created."""
+  """Timestamp when wishlist was created."""
   createdAt: DateTime!
-  """Timestamp when Wishlist was last updated."""
+  """Timestamp when wishlist was last updated."""
   lastUpdatedAt: DateTime!
   """Retrieves product variants."""
   productVariants(
@@ -161,7 +157,7 @@ type Wishlist @key(fields: "id") {
   ): ProductVariantConnection!
 }
 
-"""A connection of Wishlists."""
+"""A connection of wishlists."""
 type WishlistConnection @shareable {
   """The resulting entities."""
   nodes: [Wishlist!]!
